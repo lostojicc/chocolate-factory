@@ -1,4 +1,4 @@
-package beans;
+package models;
 
 public class Product {
 	private String id;

@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import beans.Product;
+import models.Product;
 
 /***
  * Klasa namenjena da ucita proizvode iz fajla i pruzi operacije nad njima (poput pretrage).

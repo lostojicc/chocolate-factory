@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import beans.User;
+import models.User;
 /***
  * <p>Klasa namenjena da ucita korisnike iz fajla i pruza operacije nad njima (poput pretrage).
  * Korisnici se nalaze u fajlu WebContent/users.txt u obliku: <br>

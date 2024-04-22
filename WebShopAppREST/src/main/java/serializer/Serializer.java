@@ -50,7 +50,7 @@ public class Serializer<T extends ISerializable> {
             csv.append(line).append("\n");
         }
         
-        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName,true))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
             writer.write(csv.toString());
         } catch (IOException e) {
             e.printStackTrace();

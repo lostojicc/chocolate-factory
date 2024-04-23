@@ -12,8 +12,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import beans.User;
 import dao.UserDAO;
+import models.User;
 
 @Path("")
 public class LoginService {

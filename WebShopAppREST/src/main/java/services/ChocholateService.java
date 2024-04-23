@@ -11,15 +11,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import dao.DAO;
 import dao.ProductDAO;
+import models.Chocholate;
 import models.Product;
 
-@Path("/products")
-public class ProductService {
+@Path("/chocholate")
+public class ChocholateService {
 	@Context
 	ServletContext ctx;
 	
-	public ProductService() {
+	public ChocholateService() {
 	}
 	
 	@PostConstruct
@@ -27,26 +29,26 @@ public class ProductService {
 	public void init() {
 		// Ovaj objekat se instancira vise puta u toku rada aplikacije
 		// Inicijalizacija treba da se obavi samo jednom
-		if (ctx.getAttribute("productDAO") == null) {
+		if (ctx.getAttribute("chocholateDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("productDAO", new ProductDAO(contextPath));
+			ctx.setAttribute("chocholateDAO", new DAO<Chocholate>(contextPath,Chocholate.class));
 		}
 	}
 	
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Product> getProducts() {
-		ProductDAO dao = (ProductDAO) ctx.getAttribute("productDAO");
-		return dao.findAll();
+	public Collection<Chocholate> getProducts() {
+		DAO dao = (DAO) ctx.getAttribute("chocholateDAO");
+		return dao.GetAll();
 	}
 	
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Product getProducts(Product product) {
-		ProductDAO dao = (ProductDAO) ctx.getAttribute("productDAO");
-		return dao.save(product);
+	public Chocholate getChocholate(Chocholate chocholate) {
+		DAO dao = (DAO) ctx.getAttribute("chocholateDAO");
+		return (Chocholate) dao.Save(chocholate);
 	}
 		
 }

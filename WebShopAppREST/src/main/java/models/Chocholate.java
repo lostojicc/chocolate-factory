@@ -7,8 +7,8 @@ public class Chocholate implements IIdentifiable, ISerializable {
 	private String name;
 	private double price;
 	private ChocholateKind kind;
-	private int fabricId;
-	//dodati entitet fabric?
+	private int factoryId;
+	//dodati entitet factory?
 	private ChocholateType type;
 	private double grams;
 	private String description;
@@ -20,13 +20,13 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		super();
 	}
 
-	public Chocholate(String name, double price, ChocholateKind kind, int fabricId, ChocholateType type, double grams,
+	public Chocholate(String name, double price, ChocholateKind kind, int factoryId, ChocholateType type, double grams,
 			String description, String imagePath, Boolean isAvailable, int quantity) {
 		super();
 		this.name = name;
 		this.price = price;
 		this.kind = kind;
-		this.fabricId = fabricId;
+		this.factoryId = factoryId;
 		this.type = type;
 		this.grams = grams;
 		this.description = description;
@@ -43,7 +43,7 @@ public class Chocholate implements IIdentifiable, ISerializable {
 				name,
 				Double.toString(price),
 				kind.name(),
-				Integer.toString(fabricId),
+				Integer.toString(factoryId),
 				type.name(),
 				Double.toString(grams),
 				description,
@@ -60,7 +60,7 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		this.name = values[1];
 		this.price = Double.parseDouble(values[2]);
 		this.kind = ChocholateKind.valueOf(values[3]);
-		this.fabricId = Integer.parseInt(values[4]);
+		this.factoryId = Integer.parseInt(values[4]);
 		this.type = ChocholateType.valueOf(values[5]);
 		this.grams = Double.parseDouble(values[6]);
 		this.description = values[7];
@@ -94,11 +94,11 @@ public class Chocholate implements IIdentifiable, ISerializable {
 	}
 
 	public int getFabricId() {
-		return fabricId;
+		return factoryId;
 	}
 
 	public void setFabricId(int fabricId) {
-		this.fabricId = fabricId;
+		this.factoryId = fabricId;
 	}
 
 	public ChocholateType getType() {

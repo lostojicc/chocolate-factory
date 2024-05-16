@@ -12,7 +12,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dao.UserDAO;
 import models.User;
 
 @Path("")
@@ -29,25 +28,25 @@ public class LoginService {
 	public void init() {
 		// Ovaj objekat se instancira vise puta u toku rada aplikacije
 		// Inicijalizacija treba da se obavi samo jednom
-		if (ctx.getAttribute("userDAO") == null) {
-	    	String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("userDAO", new UserDAO(contextPath));
-		}
+//		if (ctx.getAttribute("userDAO") == null) {
+//	    	String contextPath = ctx.getRealPath("");
+//			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+//		}
 	}
 	
-	@POST
-	@Path("/login")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(User user, @Context HttpServletRequest request) {
-		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
-		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
-		if (loggedUser == null) {
-			return Response.status(400).entity("Invalid username and/or password").build();
-		}
-		request.getSession().setAttribute("user", loggedUser);
-		return Response.status(200).build();
-	}
+//	@POST
+//	@Path("/login")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response login(User user, @Context HttpServletRequest request) {
+//		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
+//		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
+//		if (loggedUser == null) {
+//			return Response.status(400).entity("Invalid username and/or password").build();
+//		}
+//		request.getSession().setAttribute("user", loggedUser);
+//		return Response.status(200).build();
+//	}
 	
 	
 	@POST

@@ -1,59 +1,85 @@
 package models;
 
-import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Date;
 
-public class User implements Serializable {
-	
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String username;
-	private String password;
+import serializer.ISerializable;
+import utils.DateUtils;
+
+public class User implements IIdentifiable, ISerializable {
+	protected int id;
+	protected String userName;
+	protected String password;
+	protected String name;
+	protected String surname;
+	protected Gender gender;
+	protected Date dateOfBirth;
+	protected UserRole role;
+	// protected?
 	
 	public User() {
+		
 	}
 
-	public User(String firstName, String lastName, String email, String username, String password) {
+	public User(int id, String userName, String password, String name, String surname, Gender gender, Date dateOfBirth,
+			UserRole role) {
 		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
-		this.username = username;
+		this.id = id;
+		this.userName = userName;
 		this.password = password;
+		this.name = name;
+		this.surname = surname;
+		this.gender = gender;
+		this.dateOfBirth = dateOfBirth;
+		this.role = role;
 	}
 
-
-
-	public String getFirstName() {
-		return firstName;
+	@Override
+	public String[] ToCSV() {
+		// TODO Auto-generated method stub
+		String[] values = {
+				Integer.toString(id),
+				userName,
+				password,
+				name,
+				surname,
+				gender.name(),
+				DateUtils.format(dateOfBirth),
+				role.name()
+		};
+		return values;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	@Override
+	public void FromCSV(String[] values) {
+		this.id = Integer.parseInt(values[0]);
+		this.userName = values[1];
+		this.password = values[2];
+		this.name = values[3];
+		this.surname = values[4];
+		this.gender = Gender.valueOf(values[5]);
+		try {
+			this.dateOfBirth = DateUtils.parse(values[6]);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }	
+		this.role = UserRole.valueOf(values[7]);
 	}
 
-	public String getLastName() {
-		return lastName;
+	public int getId() {
+		return id;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getPassword() {
@@ -64,60 +90,43 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		return result;
+	public String getName() {
+		return name;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (firstName == null) {
-			if (other.firstName != null)
-				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
-				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.equals(other.username))
-			return false;
-		return true;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "User [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", username=" + username
-				+ ", password=" + password + "]";
+	public String getSurname() {
+		return surname;
 	}
 
-	private static final long serialVersionUID = 6640936480584723344L;
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public Date getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
 }

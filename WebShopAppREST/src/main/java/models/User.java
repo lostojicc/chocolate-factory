@@ -1,6 +1,7 @@
 package models;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Date;
 
 import serializer.ISerializable;
@@ -13,7 +14,7 @@ public class User implements IIdentifiable, ISerializable {
 	protected String name;
 	protected String surname;
 	protected Gender gender;
-	protected Date dateOfBirth;
+	protected LocalDate dateOfBirth;
 	protected UserRole role;
 	// protected?
 	
@@ -21,10 +22,9 @@ public class User implements IIdentifiable, ISerializable {
 		
 	}
 
-	public User(int id, String userName, String password, String name, String surname, Gender gender, Date dateOfBirth,
+	public User(String userName, String password, String name, String surname, Gender gender, LocalDate dateOfBirth,
 			UserRole role) {
 		super();
-		this.id = id;
 		this.userName = userName;
 		this.password = password;
 		this.name = name;
@@ -44,7 +44,7 @@ public class User implements IIdentifiable, ISerializable {
 				name,
 				surname,
 				gender.name(),
-				DateUtils.format(dateOfBirth),
+				dateOfBirth.toString(),
 				role.name()
 		};
 		return values;
@@ -58,11 +58,7 @@ public class User implements IIdentifiable, ISerializable {
 		this.name = values[3];
 		this.surname = values[4];
 		this.gender = Gender.valueOf(values[5]);
-		try {
-			this.dateOfBirth = DateUtils.parse(values[6]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }	
+		this.dateOfBirth = LocalDate.parse(values[6]);
 		this.role = UserRole.valueOf(values[7]);
 	}
 
@@ -114,11 +110,11 @@ public class User implements IIdentifiable, ISerializable {
 		this.gender = gender;
 	}
 
-	public Date getDateOfBirth() {
+	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 

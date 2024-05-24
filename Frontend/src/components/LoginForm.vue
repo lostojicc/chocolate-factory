@@ -9,7 +9,7 @@
                         <div class="border-bottom border-top border-primary bg-light py-5 px-4">
                             <div class="text-center">
                                 <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Welcome</small>
-                                <h1 class="display-5 mb-5">Login using your credentials</h1>
+                                <h1 class="display-5 mb-5">Sign in using your credentials</h1>
                             </div>
                             <div class="row g-4 form">
                                 <div class="col-lg-3 col-md-6">
@@ -32,12 +32,18 @@
                                 <div class="col-lg-3 col-md-6">
 
                                 </div>
-                                <div class="col-lg-4 col-md-6">
-
+                                <div class="col">
                                 </div>
-                                <div class="col-4 text-center stackpanel">
-                                    <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill">Submit Now</button>
-                                    <label>Don't have an account? <router-link :to="'/register'">Register now</router-link></label>
+                                <div class="col">
+                                </div>
+                                <div class="col text-center stackpanel">
+                                    <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill">Sign In</button>
+                                    <br/>
+                                    <label>Don't have an account? <router-link :to="'/register'"><b>Register now.</b></router-link></label>
+                                </div>
+                                <div class="col">
+                                </div>
+                                <div class="col">
                                 </div>
                             </div>
                         </div>

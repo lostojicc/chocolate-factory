@@ -1,5 +1,6 @@
 package services;
 
+import java.nio.file.attribute.UserPrincipalLookupService;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -11,20 +12,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import Controllers.ChocholateController;
 import Controllers.ControllersInjector;
 import Controllers.UserController;
 import dao.DAO;
-import dao.ProductDAO;
 import models.Chocholate;
-import models.Product;
+import models.User;
 
-@Path("/chocholate")
-public class ChocholateService {
+@Path("/register")
+public class RegisterService {
 	@Context
 	ServletContext ctx;
 	
-	public ChocholateService() {
+	public RegisterService() {
 	}
 	
 	@PostConstruct
@@ -41,10 +40,22 @@ public class ChocholateService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Chocholate> getProducts() {
+	public Collection<User> getUsers(User user) {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
-		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
-		return chochoContr.GetAll();
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		return userCont.GetAll();
+	}
+	
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Boolean getChocholate(User user) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		return true;
 	}
 }

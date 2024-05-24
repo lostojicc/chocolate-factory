@@ -1,4 +1,5 @@
-import './assets/main.css'
+import './assets/style.css'
+import './assets/bootstrap.min.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -9,3 +10,5 @@ const app = createApp(App)
 app.use(router)
 
 app.mount('#app')
+
+

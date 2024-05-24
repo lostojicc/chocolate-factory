@@ -15,10 +15,8 @@
                                 <div class="col-lg-3 col-md-6">
     
                                 </div>
-                                <div class="col-lg-6 col-md-6">
-                                
-                                        <input type="text" class="form-control border-primary p-2" placeholder="Enter Your Username">
-                                    
+                                <div class="col-lg-6 col-md-6">                            
+                                        <input type="text" class="form-control border-primary p-2" placeholder="Enter Your Username">                  
                                 </div>
                                 <div class="col-lg-3 col-md-6">
 

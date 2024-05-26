@@ -3,6 +3,8 @@ import java.util.ArrayList;
 
 import dao.DAO;
 import models.Chocholate;
+import models.ChocholateKind;
+import models.ChocholateType;
 
 
 public class ChocholateController {
@@ -19,7 +21,6 @@ private String contextPath;
 		CHODAo = new DAO<Chocholate>(contextPath, Chocholate.class);
 	}
 	public ArrayList<Chocholate> GetAll(){
-		
 		return CHODAo.GetAll();
 	}
 }

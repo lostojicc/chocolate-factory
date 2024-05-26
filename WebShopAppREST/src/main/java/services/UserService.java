@@ -1,10 +1,12 @@
 package services;
 
 import java.nio.file.attribute.UserPrincipalLookupService;
+import javax.ws.rs.core.Response;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,12 +20,12 @@ import dao.DAO;
 import models.Chocholate;
 import models.User;
 
-@Path("/register")
-public class RegisterService {
+@Path("/user")
+public class UserService {
 	@Context
 	ServletContext ctx;
 	
-	public RegisterService() {
+	public UserService() {
 	}
 	
 	@PostConstruct
@@ -49,13 +51,23 @@ public class RegisterService {
 	}
 	
 	@POST
-	@Path("/")
+	@Path("/register")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Boolean getChocholate(User user) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response RegisterNewUser(User user) {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		UserController userCont = conInjector.getController(UserController.class);
 		
-		return true;
+		if(userCont.GetByUsername(user.getUsername()) != null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: User with given username already exists.")
+                    .build();
+		}
+		
+		userCont.Save(user);
+		
+		String message = "User registered successfully.";
+        return Response.ok(message).build();
 	}
 }

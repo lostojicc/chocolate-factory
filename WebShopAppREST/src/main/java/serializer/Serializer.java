@@ -20,7 +20,7 @@ public class Serializer<T extends ISerializable> {
 		directoryName = contextPath;
 		
 		classType = clazz;
-		fileName = String.format("%s/%s.csv", directoryName, classType.getSimpleName().toLowerCase());
+		fileName = String.format("%s%s.csv", directoryName, classType.getSimpleName().toLowerCase());
 		
 		//Used for file system, in web case there is no need for dir creation
 		/*

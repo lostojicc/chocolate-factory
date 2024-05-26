@@ -9,7 +9,7 @@ import utils.DateUtils;
 
 public class User implements IIdentifiable, ISerializable {
 	protected int id;
-	protected String userName;
+	protected String username;
 	protected String password;
 	protected String name;
 	protected String surname;
@@ -22,10 +22,10 @@ public class User implements IIdentifiable, ISerializable {
 		
 	}
 
-	public User(String userName, String password, String name, String surname, Gender gender, LocalDate dateOfBirth,
+	public User(String username, String password, String name, String surname, Gender gender, LocalDate dateOfBirth,
 			UserRole role) {
 		super();
-		this.userName = userName;
+		this.username = username;
 		this.password = password;
 		this.name = name;
 		this.surname = surname;
@@ -39,7 +39,7 @@ public class User implements IIdentifiable, ISerializable {
 		// TODO Auto-generated method stub
 		String[] values = {
 				Integer.toString(id),
-				userName,
+				username,
 				password,
 				name,
 				surname,
@@ -53,7 +53,7 @@ public class User implements IIdentifiable, ISerializable {
 	@Override
 	public void FromCSV(String[] values) {
 		this.id = Integer.parseInt(values[0]);
-		this.userName = values[1];
+		this.username = values[1];
 		this.password = values[2];
 		this.name = values[3];
 		this.surname = values[4];
@@ -70,12 +70,12 @@ public class User implements IIdentifiable, ISerializable {
 		this.id = id;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {

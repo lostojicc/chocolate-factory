@@ -23,11 +23,25 @@ public class UserController{
 		UserDao = new DAO<User>(contextPath, User.class);
 	}
 	public ArrayList<User> GetAll(){
-		User user = new User("kita", "mika", "ludajaja123", "stefan", Gender.Female , LocalDate.now(),
+		/*User user = new User("kita", "mika", "ludajaja123", "stefan", Gender.Female , LocalDate.now(),
 				UserRole.Administrator);
-		UserDao.Save(user);
+		UserDao.Save(user);*/
 		
 		return UserDao.GetAll();
+	}
+	
+	public User GetByUsername(String username) {
+		for(User user: this.GetAll()) {
+			if(user.getUsername().equals(username)) {
+				return user;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void Save(User user) {
+		UserDao.Save(user);
 	}
 	
 

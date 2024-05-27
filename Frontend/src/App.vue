@@ -16,7 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
                             <a href="index.html" class="nav-item nav-link active">Home</a>
-                            <a href="about.html" class="nav-item nav-link">About</a>
+                            <a href="about.html" class="nav-item nav-link"><RouterLink :to="'/factory'">About</RouterLink></a>
                             <a href="service.html" class="nav-item nav-link">Services</a>
                             <a href="event.html" class="nav-item nav-link">Events</a>
                             <a href="menu.html" class="nav-item nav-link">Menu</a>

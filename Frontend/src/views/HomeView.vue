@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid py-5">
+    <div class="container-fluid py-4">
         <FactoryCard/>
     </div>
 </template>

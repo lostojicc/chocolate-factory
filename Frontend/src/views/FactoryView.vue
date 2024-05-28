@@ -24,6 +24,7 @@ const route = useRoute();
 
 onMounted(async () => {
   await loadFactory();
+  loading.value = false;
 });
 
 async function loadFactory() {
@@ -39,16 +40,12 @@ async function loadFactory() {
 
       const addressResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/location/address/${factory.value.location.addressId}`);
       factory.value.location.address = addressResponse.data;
-
-      loading.value = false;
     } catch (error) {
       console.error('Error loading factory data:', error);
       error.value = true;
-      loading.value = false;
     }
   } else {
     error.value = true;
-    loading.value = false;
   }
 }
 </script>

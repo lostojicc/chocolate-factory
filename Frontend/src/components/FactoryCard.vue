@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row g-5 align-items-center border border-primary rounded my-2">
+        <div class="row g-5 align-items-center mb-5">
             <div class="col-lg-4 wow bounceInUp" data-wow-delay="0.1s">
                 <img src="../img/about.jpg" class="img-fluid rounded" alt="">
             </div>

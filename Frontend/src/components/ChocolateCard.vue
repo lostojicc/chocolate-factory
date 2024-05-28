@@ -21,17 +21,17 @@
                 </div>
             </div>    
             <div class="row p-3">
-                <div v-if="chocolate.isAvailable == true" class="col-8 d-flex align-items-center">
+                <div v-if="chocolate.isAvailable == true" class="col-9 d-flex align-items-center">
                     <h4 class="text-primary m-2">Available:</h4>
                     <h4 class="text-dark m-2">{{ chocolate.quantity }}</h4>
                 </div>
-                <div v-else class="col-8 d-flex align-items-center">
-                    <h4 class="text-primary m-2">Not available</h4>
+                <div v-else class="col-9 d-flex align-items-center">
+                    <h4 class="text-dark m-2">Not available</h4>
                 </div>
                 <div class="col d-flex">
-                    <a class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
+                    <a v-if="chocolate.isAvailable" class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
                     <a class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-pencil-alt"></i></a>
-                    <a class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-trash-alt"></i></a>
+                    <a class="btn btn-primary btn-sm-square rounded-circle" href=""><i class="fas fa-trash-alt"></i></a>
                 </div>
             </div>
         </div>

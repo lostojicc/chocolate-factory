@@ -1,5 +1,10 @@
 package Controllers;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import dao.DAO;
 import models.Chocholate;
@@ -22,5 +27,16 @@ private String contextPath;
 	}
 	public ArrayList<Chocholate> GetAll(){
 		return CHODAo.GetAll();
+	}
+	
+	public ArrayList<Chocholate> getByFactoryId(int id){
+		ArrayList<Chocholate> chocholates = new ArrayList<>();
+		
+		for (Chocholate chocholate : (ArrayList<Chocholate>)CHODAo.GetAll()) {
+			if(chocholate.getFabricId() == id)
+				chocholates.add(chocholate);
+		}
+		
+		return chocholates;
 	}
 }

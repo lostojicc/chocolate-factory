@@ -1,15 +1,17 @@
 package models;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import serializer.ISerializable;
 
 public class Factory implements IIdentifiable, ISerializable{
 	private int id;
 	private String name;
-	private LocalDateTime openTime;
-	private LocalDateTime closeTime;
+	private LocalTime openTime;
+	private LocalTime closeTime;
 	private OpenStatus status;
+	private int locationId;
 	private String imagePath;
 	private double rating;
 	
@@ -19,13 +21,14 @@ public class Factory implements IIdentifiable, ISerializable{
 	
 	
 
-	public Factory(String name, LocalDateTime openTime, LocalDateTime closeTime, OpenStatus status, String imagePath,
+	public Factory(String name, LocalTime openTime, LocalTime closeTime, OpenStatus status, int locationId, String imagePath,
 			double rating) {
 		super();
 		this.name = name;
 		this.openTime = openTime;
 		this.closeTime = closeTime;
 		this.status = status;
+		this.locationId = locationId;
 		this.imagePath = imagePath;
 		this.rating = rating;
 	}
@@ -41,6 +44,7 @@ public class Factory implements IIdentifiable, ISerializable{
 				openTime.toString(),
 				closeTime.toString(),
 				status.toString(),
+				Integer.toString(locationId),
 				imagePath,
 				Double.toString(rating)
 		};
@@ -52,11 +56,12 @@ public class Factory implements IIdentifiable, ISerializable{
 		// TODO Auto-generated method stub
 		this.id = Integer.parseInt(values[0]);
 		this.name = values[1];
-		this.openTime = LocalDateTime.parse(values[2]);
-		this.closeTime = LocalDateTime.parse(values[3]);
+		this.openTime = LocalTime.parse(values[2]);
+		this.closeTime = LocalTime.parse(values[3]);
 		this.status = OpenStatus.valueOf(values[4]);
-		this.imagePath = values[5];
-		this.rating = Double.parseDouble(values[6]);
+		this.locationId = Integer.parseInt(values[5]);
+		this.imagePath = values[6];
+		this.rating = Double.parseDouble(values[7]);
 	}
 
 	
@@ -83,25 +88,25 @@ public class Factory implements IIdentifiable, ISerializable{
 		this.name = name;
 	}
 
-	public LocalDateTime getOpenTime() {
+	public LocalTime getOpenTime() {
 		return openTime;
 	}
 
 
 
-	public void setOpenTime(LocalDateTime openTime) {
+	public void setOpenTime(LocalTime openTime) {
 		this.openTime = openTime;
 	}
 
 
 
-	public LocalDateTime getCloseTime() {
+	public LocalTime getCloseTime() {
 		return closeTime;
 	}
 
 
 
-	public void setCloseTime(LocalDateTime closeTime) {
+	public void setCloseTime(LocalTime closeTime) {
 		this.closeTime = closeTime;
 	}
 
@@ -139,6 +144,18 @@ public class Factory implements IIdentifiable, ISerializable{
 
 	public void setRating(double rating) {
 		this.rating = rating;
+	}
+
+
+
+	public int getLocationId() {
+		return locationId;
+	}
+
+
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
 	}
 	
 	

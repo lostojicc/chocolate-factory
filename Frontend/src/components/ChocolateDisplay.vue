@@ -9,11 +9,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard/>
-                        <ChocolateCard/>
-                        <ChocolateCard/>
-                        <ChocolateCard/>
-                        <ChocolateCard/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate"/>
                     </div>
                 </div>
             </div>
@@ -25,4 +21,31 @@
 
 <script setup>
     import ChocolateCard from './ChocolateCard.vue';
+    import { defineProps, computed } from 'vue';
+    import {ref, onMounted} from 'vue';
+    import axios from 'axios';
+
+    const props = defineProps({
+        factory: {
+            type: Object,
+            required: true
+        }
+    });
+
+    const chocolates = ref([]);
+
+    onMounted(async () => {
+        await loadChocolates();
+    });
+
+    async function loadChocolates() {
+        try {
+            const chocolateResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/chocolates/${props.factory.id}`);
+            chocolates.value = chocolateResponse.data;
+        } catch (error) {
+            console.error('Error loading chocolates:', error);
+        }
+    }
+
+    
 </script>

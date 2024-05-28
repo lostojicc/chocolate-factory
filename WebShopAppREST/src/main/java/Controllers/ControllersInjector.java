@@ -3,6 +3,8 @@ package Controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import models.Location;
+
 public class ControllersInjector {
     private Map<Class<?>, Object> controllers = new HashMap<>();
     private String contextPath;
@@ -34,10 +36,15 @@ public class ControllersInjector {
     private void initializeControllers() {
         UserController userController = new UserController(contextPath);
         ChocholateController chocholateController = new ChocholateController(contextPath);
-
+        FactoryController factoryController = new FactoryController(contextPath);
+        LocationController locationController = new LocationController(contextPath);
+        AddressController addressController = new AddressController(contextPath);
 
         registerController(UserController.class, userController);
         registerController(ChocholateController.class, chocholateController);
+        registerController(FactoryController.class, factoryController);
+        registerController(LocationController.class, locationController);
+        registerController(AddressController.class, addressController);
 
         connectControllers();
     }

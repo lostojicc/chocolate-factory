@@ -23,8 +23,8 @@ const router = createRouter({
       component: RegisterView
     },
     {
-      path: "/factory",
-      name: "factory",
+      path: '/factory/:id',
+      name: 'factory',
       component: FactoryView
     }
   ]

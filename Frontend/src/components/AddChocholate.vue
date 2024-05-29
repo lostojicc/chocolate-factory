@@ -9,20 +9,20 @@
                                 </div>
                                 <div class="col-3">
                                     <input type="text" class="form-control border-primary p-2" placeholder="Enter Chocholate Name" v-model="chocolate.name"/>
-                                    <label class="red-labels" v-bind:class="{invisible : hideUsernameValidation}" >{{reqiuredMessage}}</label>
+                                    <label class="red-labels" v-bind:class="{invisible : hideNameValidation}" >{{requiredMessage}}</label>
                                 </div>
                                 <div class="col-1">
                                 </div>
                                 <div class="col-2">
                                     <input type="number" class="form-control border-primary p-2" placeholder="Enter Price here"  min="1" max="150000" step="0.01" v-model="chocolate.price">
-                                    <label class="red-labels" v-bind:class="{invisible : hideNameValidation}" >{{reqiuredMessage}}</label>
+                                    <label class="red-labels" v-bind:class="{invisible : hidePriceValidation}" >{{requiredMessage}}</label>
                                 </div>
 
                                 <div class="col-1">
                                 </div>
                                 <div class="col-2">
                                     <input type="number" class="form-control border-primary p-2" placeholder="Enter Weight here"  min="1" max="150000" step="0.01" v-model="chocolate.grams">
-                                    <label class="red-labels" v-bind:class="{invisible : hidePasswordValidation}" >{{reqiuredMessage}}</label>
+                                    <label class="red-labels" v-bind:class="{invisible : hideWeightValidation}" >{{requiredMessage}}</label>
                                 </div>
                                 <div class="col-1">
                                 </div>
@@ -34,7 +34,7 @@
                     
                                 <div class="col-3 h-500">
                                     <input type="text" class="form-control border-primary p-2 height" placeholder="Enter Description here" v-model="chocolate.description"/>
-                                    <label class="red-labels" v-bind:class="{invisible : hideUsernameValidation}" >{{reqiuredMessage}}</label>
+                                    <label class="red-labels" v-bind:class="{invisible : hideDescValidation}" >{{requiredMessage}}</label>
                                 </div>
                                 <div class="col-1">
                                 </div>
@@ -45,7 +45,7 @@
                                         <option value="Milky">Milky</option>
                                         <option value="White">White</option>
                                     </select>
-                                    <input type="file" class="form-control border-primary p-2 mt-auto" @change="handleFileUpload" accept="image/*"/>
+                                    <input type="file" class="form-control border-primary p-2 mt-auto" @change="handleFileUpload" accept="image/png"/>
                                     <label class="red-labels" v-bind:class="{invisible : hideImageValidation}" >{{imageMessage}}</label>
                                 </div>
                                 <div class="col-1">
@@ -69,8 +69,7 @@
 
 <script setup>
 import axios  from 'axios';
-import {ref, onMounted} from 'vue';
-import { useRouter } from 'vue-router';
+import {ref} from 'vue';
 
 const chocolate = ref({
     name: '',
@@ -85,11 +84,20 @@ const chocolate = ref({
     imagePath: ''
 })
 
+const editMode = ref(null);
+
 const selectedFile = ref(null)
 
-const imageMessage = ref('* Please select an image')
+const imageMessage = ref('* Please select an pdf image')
 const hideImageValidation = ref(true)
 
+const requiredMessage = ref('* Field required')
+const hideNameValidation = ref(true)
+const hidePriceValidation = ref(true)
+const hideWeightValidation = ref(true)
+const hideDescValidation = ref(true)
+
+const canExecute = ref(true)
 
 function handleFileUpload(event){
     selectedFile.value = event.target.files[0];
@@ -98,14 +106,55 @@ function handleFileUpload(event){
 function SubmitButton(event){
     event.preventDefault();
     
+    if(chocolate.value.name === ''){
+        hideNameValidation.value = false;
+        canExecute.value = false;
+    }
+    else{
+        hideNameValidation.value = true;
+    }
+
+    if(chocolate.value.price === null){
+        hidePriceValidation.value = false;
+        canExecute.value = false;
+    }
+    else{
+        hidePriceValidation.value = true;
+    }
+
+    if(chocolate.value.grams === null){
+        hideWeightValidation.value = false;
+        canExecute.value = false;
+    }
+    else{
+        hideWeightValidation.value = true;
+    }
+
+    if(chocolate.value.description === ''){
+        hideDescValidation.value = false;
+        canExecute.value = false;
+    }
+    else{
+        hideDescValidation.value = true;
+    }
+
+    if(editMode.value){
+        editChocolate();
+        return;
+    }
+
     if(!CheckFile()){
         hideImageValidation.value = false;
-        return;
+        canExecute.value = false;
     }
     else{
         hideImageValidation.value = true;
     }
 
+    if(!canExecute.value){
+        canExecute.value = true;
+        return;
+    }
 
     const formData = new FormData();
     formData.append('file', selectedFile.value);
@@ -118,7 +167,6 @@ function SubmitButton(event){
                     alert('Image sent succsesfully!')
                     chocolate.value.imagePath = response.data;
                     sendChocolate();
-                    
                     }
                 }).catch(error => {
                         if (error.response.status === 400) {
@@ -127,16 +175,17 @@ function SubmitButton(event){
                             alert('Image not saved')
                         }
                     })
-           
 }
 
 function CheckFile(){
-    if (!selectedFile.value.type.startsWith('image/') || selectedFile.value === null) {
+    if(selectedFile.value === null){
+        return false;
+    }
+    if (!selectedFile.value.type.startsWith('image/png')) {
         return false;
     }
     return true;
 }
-
 
 function sendChocolate(){
     console.log(chocolate.value)
@@ -144,8 +193,55 @@ function sendChocolate(){
                 if (response.status === 200) {
                     alert('Chocholate add succsesfull!')
                 }
+        }).catch(error => {
+            console.error('Failed to add chocolate: ',error.response.status);
         });
 }
+
+function editChocolate(){
+    if(!canExecute.value){
+        canExecute.value = true;
+        return;
+    }
+
+    if(CheckFile()){
+        const formData = new FormData();
+        formData.append('file', selectedFile.value);
+        axios.post('http://localhost:8080/WebShopAppREST/rest/file/image', formData, {
+                    headers: {
+                            'Content-Type': 'multipart/form-data'
+                }
+                }).then( response => {
+                    if (response.status === 200) {
+                    alert('Image sent succsesfully!')
+                    chocolate.value.imagePath = response.data;
+                    updateChocholate();
+                    }
+                }).catch(error => {
+                        if (error.response.status === 400) {
+                            console.error("Bad Request:", error.response.data)
+                        }else{
+                            alert('Image not saved')
+                        }
+                    })
+    }
+    else{
+        updateChocholate();
+    }
+
+}
+
+function updateChocholate(){
+    axios.post('http://localhost:8080/WebShopAppREST/rest/chocholate/update', chocolate.value).then( response => {
+                if (response.status === 200) {
+                    alert('Chocholate updated succsesfully!')
+                }
+        }).catch(error => {
+            console.error('Failed to update chocolate: ',error.response.status);
+        });
+}
+
+
 
 </script>
 

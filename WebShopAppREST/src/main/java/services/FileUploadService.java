@@ -4,7 +4,10 @@ import java.io.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
+import java.util.List;
 import java.io.File;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -34,82 +38,19 @@ public class FileUploadService {
 	@POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile (@FormDataParam("file") InputStream inputStream)
+	public Response uploadFile (@FormDataParam("file") InputStream inputStream, @Context HttpHeaders headers)
 	{
         try {
-            String path = splitInputStream(inputStream);
-            return Response.status(Response.Status.OK).entity(path).build();
+        	String imageIdent = "glorya " + LocalDate.now().toString() + " "  + LocalTime.now().toString().replaceAll(":", "-") + ".png";
+        	String path = ctx.getRealPath("") + "images" + File.separator + imageIdent;
+        	saveToFile(inputStream, path);
+        	String webPath = "http://localhost:8080/WebShopAppREST/images/" + imageIdent;
+            return Response.status(Response.Status.OK).entity(webPath).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
-
-	private String splitInputStream(InputStream inputStream) throws IOException {
-       /* ByteArrayOutputStream firstPartBuffer = new ByteArrayOutputStream();
-        ByteArrayOutputStream secondPartBuffer = new ByteArrayOutputStream();
-        
-        int counter = 0;
-        int previousChar1 = -1;
-        int previousChar2 = -1;
-        int previousChar3 = -1;
-        int currentChar;
-        boolean delimiterFound = false;
- 
-
-        while ((currentChar = inputStream.read()) != -1) {
-            if (!delimiterFound) {
-                firstPartBuffer.write(currentChar);
-
-                if(previousChar3 == '\r' && previousChar2 == '\n' && previousChar1 == '\r' && currentChar == '\n')
-                	delimiterFound = true;
-                
-            } else {
-                secondPartBuffer.write(currentChar);
-            }
-            counter++;
-            
-            if(counter == 1)
-            	previousChar3 = currentChar;
-            	
-            if(counter == 2)
-            	previousChar2 = currentChar;
-            
-            if(counter == 3)
-            	previousChar3 = currentChar;
-            
-            if(counter > 3)
-            {
-            	previousChar3 = previousChar2;
-            	previousChar2 = previousChar1;
-            	previousChar1 = currentChar;
-            }
-        }
-        
-        byte[] firstPartBytes = firstPartBuffer.toByteArray();
-        firstPartBytes = new String(firstPartBytes, 0, firstPartBytes.length - 2).getBytes();
-        
-        String firstPart = new String(firstPartBytes); */
-        String path = ctx.getRealPath("") + "images" + File.separator + "pera.png";                   
-        //InputStream secondPart =  new ByteArrayInputStream(secondPartBuffer.toByteArray());
-        saveToFile(inputStream, path);
-        
-        return path;
-	}
-	
-	private String getFileName(String firstPart)
-	{
-		for(String str : firstPart.split(" "))
-		{
-			if(str.startsWith("filename="))
-			{
-				return str.split("=")[1].replaceAll("\"", "").split("\r")[0];
-			}
-		}
-		
-		return null;
-	}
-	
 	
     private void saveToFile(InputStream uploadedInputStream, String path) throws IOException {
         try {
@@ -125,5 +66,5 @@ public class FileUploadService {
         catch(Exception e) {
         	e.printStackTrace();
         };
-    }   
+    }  
 }

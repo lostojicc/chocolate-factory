@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import Controllers.ChocholateController;
 import Controllers.ControllersInjector;
@@ -66,4 +67,30 @@ public class ChocholateService {
 		chochoContr.Save(chocolate);
 		return Response.ok().build();
 	}
+	
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocoalate(Chocholate chocolate) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		
+		if(!chocolate.getImagePath().equals(chochoContr.GetById(chocolate.getId()).getImagePath())) {
+			String filePath = ctx.getRealPath("") + "images" + chocolate.getImagePath().split("images")[1];
+	        File file = new File(filePath);
+
+	        if (file.delete()) {
+	            System.out.println("File deleted successfully.");
+	        } else {
+	            System.err.println("Failed to delete the file.");
+	        }
+		}
+		if(chochoContr.Update(chocolate))
+			return Response.ok().build();
+		else
+			return Response.status(Status.BAD_REQUEST).build();
+	}
+	
 }

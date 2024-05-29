@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row g-5 align-items-center mb-5">
             <div class="col-lg-4 wow bounceInUp" data-wow-delay="0.1s">
-                <img src="../img/about.jpg" class="img-fluid rounded" alt="">
+                <img :src="factory.imagePath" class="img-fluid rounded" alt="">
             </div>
             <div class="col-lg-8 wow bounceInUp" data-wow-delay="0.3s">
                 <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">{{ factory.status }}</small>

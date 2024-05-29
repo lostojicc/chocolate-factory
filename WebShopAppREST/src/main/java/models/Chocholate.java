@@ -97,7 +97,7 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		return factoryId;
 	}
 
-	public void getFactoryId(int factoryId) {
+	public void setFactoryId(int factoryId) {
 		this.factoryId = factoryId;
 	}
 

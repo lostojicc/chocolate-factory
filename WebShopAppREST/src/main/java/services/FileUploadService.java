@@ -38,7 +38,7 @@ public class FileUploadService {
 	@POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile (@FormDataParam("file") InputStream inputStream, @Context HttpHeaders headers)
+	public Response uploadFile (@FormDataParam("file") InputStream inputStream)
 	{
         try {
         	String imageIdent = "glorya " + LocalDate.now().toString() + " "  + LocalTime.now().toString().replaceAll(":", "-") + ".png";

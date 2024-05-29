@@ -15,7 +15,7 @@ import models.ChocholateType;
 public class ChocholateController {
 private String contextPath;
 	
-	private DAO<Chocholate> CHODAo;
+	private DAO CHODAo;
 	
 	public void setDependency() {
 		
@@ -30,7 +30,7 @@ private String contextPath;
 	}
 	
 	public Chocholate GetById(int id){
-		return CHODAo.GetById(id);
+		return (Chocholate) CHODAo.GetById(id);
 	}
 
 	public void Save(Chocholate chocolate) {

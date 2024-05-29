@@ -1,23 +1,30 @@
 package services;
 
+import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.io.File;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import Controllers.ChocholateController;
 import Controllers.ControllersInjector;
-import Controllers.UserController;
-import dao.DAO;
-import dao.ProductDAO;
 import models.Chocholate;
-import models.Product;
+
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/chocholate")
 public class ChocholateService {
@@ -39,12 +46,24 @@ public class ChocholateService {
 	}
 	
 	@GET
-	@Path("/")
+	@Path("/getAll")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Chocholate> getProducts() {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
 		return chochoContr.GetAll();
+	}
+	
+	@POST
+	@Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addChocoalate(Chocholate chocolate) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		chochoContr.Save(chocolate);
+		return Response.ok().build();
 	}
 }

@@ -40,9 +40,9 @@ public class UserService {
 	}
 	
 	@GET
-	@Path("/")
+	@Path("/getAll")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<User> getUsers(User user) {
+	public Collection<User> getUsers() {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		UserController userCont = conInjector.getController(UserController.class);

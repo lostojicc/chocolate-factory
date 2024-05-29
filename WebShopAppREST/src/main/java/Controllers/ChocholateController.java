@@ -23,4 +23,9 @@ private String contextPath;
 	public ArrayList<Chocholate> GetAll(){
 		return CHODAo.GetAll();
 	}
+
+	public void Save(Chocholate chocolate) {
+		CHODAo.Save(chocolate);
+	}
 }
+	

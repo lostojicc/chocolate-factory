@@ -77,20 +77,19 @@ public class ChocholateService {
 		
 		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
 		
-		if(!chocolate.getImagePath().equals(chochoContr.GetById(chocolate.getId()).getImagePath())) {
-			String filePath = ctx.getRealPath("") + "images" + chocolate.getImagePath().split("images")[1];
-	        File file = new File(filePath);
-
-	        if (file.delete()) {
-	            System.out.println("File deleted successfully.");
-	        } else {
-	            System.err.println("Failed to delete the file.");
-	        }
-		}
-		if(chochoContr.Update(chocolate))
-			return Response.ok().build();
-		else
+		Chocholate oldChocholate =  chochoContr.GetById(chocolate.getId());
+		if(oldChocholate == null) {
 			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		if(!chocolate.getImagePath().equals(oldChocholate.getImagePath())) {
+			String filePath = ctx.getRealPath("") + "images" + oldChocholate.getImagePath().split("images")[1];
+	        File file = new File(filePath);
+	        file.delete();
+		}
+		chochoContr.Update(chocolate);
+		
+		return Response.ok().build();	
 	}
 	
 }

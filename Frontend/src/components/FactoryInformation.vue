@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-3 col-md-4 d-flex justify-content-center">
-                        <img src="../img/about.jpg" class="img-fluid rounded footer-img" alt="">
+                        <img :src="factory.imagePath" class="img-fluid rounded footer-img" alt="">
                 </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="footer-item">

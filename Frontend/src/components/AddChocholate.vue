@@ -116,8 +116,9 @@ function SubmitButton(event){
                 }).then( response => {
                     if (response.status === 200) {
                     alert('Image sent succsesfully!')
-                    sendChocolate();
                     chocolate.value.imagePath = response.data;
+                    sendChocolate();
+                    
                     }
                 }).catch(error => {
                         if (error.response.status === 400) {

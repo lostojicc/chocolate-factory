@@ -46,7 +46,7 @@ public class FileUploadService {
     }
 
 	private String splitInputStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream firstPartBuffer = new ByteArrayOutputStream();
+       /* ByteArrayOutputStream firstPartBuffer = new ByteArrayOutputStream();
         ByteArrayOutputStream secondPartBuffer = new ByteArrayOutputStream();
         
         int counter = 0;
@@ -89,10 +89,10 @@ public class FileUploadService {
         byte[] firstPartBytes = firstPartBuffer.toByteArray();
         firstPartBytes = new String(firstPartBytes, 0, firstPartBytes.length - 2).getBytes();
         
-        String firstPart = new String(firstPartBytes); 
-        String path = "http://localhost:8080/ChoccolateAppREST/images/" + getFileName(firstPart);                   
-        InputStream secondPart =  new ByteArrayInputStream(secondPartBuffer.toByteArray());
-        saveToFile(secondPart, path);
+        String firstPart = new String(firstPartBytes); */
+        String path = ctx.getRealPath("") + "images" + File.separator + "pera.png";                   
+        //InputStream secondPart =  new ByteArrayInputStream(secondPartBuffer.toByteArray());
+        saveToFile(inputStream, path);
         
         return path;
 	}

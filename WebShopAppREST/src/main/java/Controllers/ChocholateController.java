@@ -15,7 +15,7 @@ import models.ChocholateType;
 public class ChocholateController {
 private String contextPath;
 	
-	private DAO CHODAo;
+	private DAO<Chocholate> CHODAo;
 	
 	public void setDependency() {
 		
@@ -29,6 +29,18 @@ private String contextPath;
 		return CHODAo.GetAll();
 	}
 	
+	public Chocholate GetById(int id){
+		return CHODAo.GetById(id);
+	}
+
+	public void Save(Chocholate chocolate) {
+		CHODAo.Save(chocolate);
+	}
+	
+	public Boolean Update(Chocholate chocolate) {
+		return CHODAo.Update(chocolate);
+	}
+	
 	public ArrayList<Chocholate> getByFactoryId(int id){
 		ArrayList<Chocholate> chocholates = new ArrayList<>();
 		
@@ -40,3 +52,4 @@ private String contextPath;
 		return chocholates;
 	}
 }
+	

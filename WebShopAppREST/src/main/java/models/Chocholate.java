@@ -93,12 +93,12 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		this.kind = kind;
 	}
 
-	public int getFabricId() {
+	public int getFactoryId() {
 		return factoryId;
 	}
 
-	public void setFabricId(int fabricId) {
-		this.factoryId = fabricId;
+	public void getFactoryId(int factoryId) {
+		this.factoryId = factoryId;
 	}
 
 	public ChocholateType getType() {

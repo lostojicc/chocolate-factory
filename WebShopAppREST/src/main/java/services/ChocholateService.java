@@ -1,23 +1,31 @@
 package services;
 
+import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.io.File;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import Controllers.ChocholateController;
 import Controllers.ControllersInjector;
-import Controllers.UserController;
-import dao.DAO;
-import dao.ProductDAO;
 import models.Chocholate;
-import models.Product;
+
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/chocholate")
 public class ChocholateService {
@@ -39,7 +47,7 @@ public class ChocholateService {
 	}
 	
 	@GET
-	@Path("/")
+	@Path("/getAll")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Chocholate> getProducts() {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
@@ -47,4 +55,42 @@ public class ChocholateService {
 		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
 		return chochoContr.GetAll();
 	}
+	
+	@POST
+	@Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addChocoalate(Chocholate chocolate) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		chochoContr.Save(chocolate);
+		return Response.ok().build();
+	}
+	
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocoalate(Chocholate chocolate) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		
+		if(!chocolate.getImagePath().equals(chochoContr.GetById(chocolate.getId()).getImagePath())) {
+			String filePath = ctx.getRealPath("") + "images" + chocolate.getImagePath().split("images")[1];
+	        File file = new File(filePath);
+
+	        if (file.delete()) {
+	            System.out.println("File deleted successfully.");
+	        } else {
+	            System.err.println("Failed to delete the file.");
+	        }
+		}
+		if(chochoContr.Update(chocolate))
+			return Response.ok().build();
+		else
+			return Response.status(Status.BAD_REQUEST).build();
+	}
+	
 }

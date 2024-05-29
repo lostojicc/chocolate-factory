@@ -45,7 +45,7 @@ private String contextPath;
 		ArrayList<Chocholate> chocholates = new ArrayList<>();
 		
 		for (Chocholate chocholate : (ArrayList<Chocholate>)CHODAo.GetAll()) {
-			if(chocholate.getFabricId() == id)
+			if(chocholate.getFactoryId() == id)
 				chocholates.add(chocholate);
 		}
 		

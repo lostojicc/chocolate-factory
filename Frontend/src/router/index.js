@@ -3,6 +3,7 @@ import HomeView  from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import AddChocholate from '../components/AddChocholate.vue'
+import FactoryView from '../views/FactoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: "/add-chocholate",
       name: "addChocholate",
       component: AddChocholate
+    },
+    {
+      path: '/factory/:id',
+      name: 'factory',
+      component: FactoryView
     }
   ]
 })

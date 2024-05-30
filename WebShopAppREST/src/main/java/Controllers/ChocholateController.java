@@ -41,6 +41,10 @@ private String contextPath;
 		return CHODAo.Update(chocolate);
 	}
 	
+	public Boolean Delete(int id) {
+		return CHODAo.Delete(GetById(id));
+	}
+	
 	public ArrayList<Chocholate> getByFactoryId(int id){
 		ArrayList<Chocholate> chocholates = new ArrayList<>();
 		

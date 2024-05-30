@@ -30,7 +30,7 @@
                 <div class="col d-flex">
                     <a v-if="chocolate.isAvailable" class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
                     <a class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
-                    <a class="btn btn-primary btn-sm-square rounded-circle" href=""><i class="fas fa-trash-alt"></i></a>
+                    <a class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
             </div>
         </div>
@@ -38,10 +38,10 @@
 </template>
 
 <script setup>
-    import { defineProps } from 'vue';
-    import { defineEmits } from 'vue';
+    import { defineProps, defineEmits } from 'vue';
+    import axios from 'axios';
 
-    const emit = defineEmits(['editEvent']);
+    const emit = defineEmits(['editEvent', 'deleteEvent']);
 
     const props = defineProps({
         chocolate: {
@@ -54,6 +54,9 @@
         emit('editEvent', props.chocolate);
     }
 
+    function deleteChocolate(){
+        emit('deleteEvent', props.chocolate.id); 
+    }
 </script>
 
 <style scoped>

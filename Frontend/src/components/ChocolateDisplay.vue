@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent"/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent"/>
                     </div>
                 </div>
             </div>
@@ -24,8 +24,8 @@
 <script setup>
     import ChocolateCard from './ChocolateCard.vue';
     import AddChocholate from './AddChocholate.vue';
-    import { defineProps, computed } from 'vue';
-    import {ref, onMounted} from 'vue';
+    import { defineProps } from 'vue';
+    import {ref, onMounted } from 'vue';
     import axios from 'axios';
 
     const props = defineProps({
@@ -60,6 +60,15 @@
     onMounted(async () => {
         await loadChocolates();
     });
+
+    function handleDeleteConfirmationEvent(chocolateId){
+        axios.delete(`http://localhost:8080/WebShopAppREST/rest/chocholate/delete/${chocolateId}`).then(response => {
+            console.log("Success: ", response.data);  
+            loadChocolates(); 
+        }).catch(error => {
+            console.error("Bad request: ", error.response.data);
+        })
+    };
 
     async function loadChocolates() {
         try {
@@ -98,5 +107,12 @@
             openForm.value = false;
         }
     }
-    
+
+    function handleDeleteEvent(data){
+        // chocolateForDeletionId = data;
+        // emit('deleteeEvent');
+        let text;
+        if (confirm("Are you sure you want to delete this chocolate?") == true) 
+            handleDeleteConfirmationEvent(data);
+    }
 </script>

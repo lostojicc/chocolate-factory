@@ -7,6 +7,25 @@
     <!-- <CommentSection/> -->
         <ChocolateDisplay :factory="factory"/>
     </div>   
+    <!-- <div v-else class="modal show" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" style="display: block;">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this item?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn" data-dismiss="modal" @click="deleteConfirmed">No</button>
+            <button type="button" class="btn btn-primary" @click="deleteCancelled">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div> -->
 </template>
 
 <script setup>
@@ -21,11 +40,24 @@ const factory = ref(null);
 const loading = ref(true);
 const error = ref(false);
 const route = useRoute();
+// const modal = ref(false);
 
 onMounted(async () => {
   await loadFactory();
   loading.value = false;
 });
+
+// function handleDeleteEvent(){
+//   modal.value = true;
+// }
+
+// function deleteCancelled(){
+//   modal.value = false;
+// }
+
+// function deleteConfirmed(){
+//   modal.value = false;
+// }
 
 async function loadFactory() {
   const factoryId = route.params.id;

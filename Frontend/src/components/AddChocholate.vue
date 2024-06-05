@@ -160,6 +160,7 @@ function handleFileUpload(event){
 
 function SubmitButton(event){
     event.preventDefault();
+    canExecute.value = true;
     
     if(chocolate.value.name === ''){
         hideNameValidation.value = false;
@@ -169,7 +170,7 @@ function SubmitButton(event){
         hideNameValidation.value = true;
     }
 
-    if(chocolate.value.price === null){
+    if(chocolate.value.price === null || chocolate.value.price === ''){
         hidePriceValidation.value = false;
         canExecute.value = false;
     }
@@ -177,7 +178,7 @@ function SubmitButton(event){
         hidePriceValidation.value = true;
     }
 
-    if(chocolate.value.grams === null){
+    if(chocolate.value.grams === null || chocolate.value.grams === ''){
         hideWeightValidation.value = false;
         canExecute.value = false;
     }
@@ -207,7 +208,6 @@ function SubmitButton(event){
     }
 
     if(!canExecute.value){
-        canExecute.value = true;
         return;
     }
 
@@ -250,13 +250,14 @@ function sendChocolate(){
                     emit('addEvent', 'Add chocolate success');
                 }
         }).catch(error => {
+            alert('Failed to add chocolate: ',error.response.status)
             console.error('Failed to add chocolate: ',error.response.status);
         });
 }
 
 function editChocolate(){
+    console.log(chocolate.value)
     if(!canExecute.value){
-        canExecute.value = true;
         return;
     }
 
@@ -291,6 +292,7 @@ function updateChocholate(){
             chocolate.value = emptyChocolate.value;
             emit('addEvent', 'Add chocolate success');
         }).catch(error => {
+            alert('Failed to update chocolate: ',error.response.status)
             console.error('Failed to update chocolate: ',error.response.status);
         });
 }

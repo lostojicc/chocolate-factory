@@ -61,7 +61,13 @@ public class UserService {
 		
 		if(userCont.GetByUsername(user.getUsername()) != null) {
 			return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Bad Request: User with given username already exists.")
+                    .entity("Username")
+                    .build();
+		}
+		
+		if(!userCont.CheckUserValid(user)) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to register user")
                     .build();
 		}
 		

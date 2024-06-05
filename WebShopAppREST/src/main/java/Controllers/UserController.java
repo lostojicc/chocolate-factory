@@ -44,5 +44,25 @@ public class UserController{
 		UserDao.Save(user);
 	}
 	
+	public Boolean CheckUserValid(User user) {
+		if(user.getName() == null || user.getName().equals("")) {
+			return false;
+		}
+		if(user.getPassword() == null || user.getPassword().equals("") || !user.getPassword().matches("^.{1,10}$")) {
+			return false;
+		}
+		if(user.getUsername() == null || user.getUsername().equals("")) {
+			return false;
+		}
+		if(user.getSurname() == null || user.getSurname().equals("")) {
+			return false;
+		}
+		if(user.getDateOfBirth() == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 
 }

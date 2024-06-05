@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.swing.colorchooser.ColorChooserComponentFactory;
+
 import dao.DAO;
 import models.Chocholate;
 import models.ChocholateKind;
@@ -54,6 +56,26 @@ private String contextPath;
 		}
 		
 		return chocholates;
+	}
+	
+	public Boolean ValidateChocolate(Chocholate chocolate) {
+		if(chocolate.getName() == null || chocolate.getName().equals("")) {
+			return false;
+		}
+		if(chocolate.getPrice() == 0.0) {
+			return false;
+		}
+		if(chocolate.getGrams() == 0.0) {
+			return false;
+		}
+		if(chocolate.getDescription() == null || chocolate.getDescription().equals("")) {
+			return false;
+		}
+		if(chocolate.getImagePath() == null || chocolate.getImagePath().equals("")) {
+			return false;
+		}
+		
+		return true;
 	}
 }
 	

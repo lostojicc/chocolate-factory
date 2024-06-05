@@ -66,6 +66,11 @@ public class ChocholateService {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		
+		if(!chochoContr.ValidateChocolate(chocolate)) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
 		chochoContr.Save(chocolate);
 		return Response.ok().build();
 	}
@@ -81,6 +86,10 @@ public class ChocholateService {
 		
 		Chocholate oldChocholate =  chochoContr.GetById(chocolate.getId());
 		if(oldChocholate == null) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		if(!chochoContr.ValidateChocolate(chocolate)) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		

@@ -250,6 +250,7 @@ function sendChocolate(){
                     emit('addEvent', 'Add chocolate success');
                 }
         }).catch(error => {
+            alert('Failed to add chocolate: ',error.response.status)
             console.error('Failed to add chocolate: ',error.response.status);
         });
 }
@@ -291,6 +292,7 @@ function updateChocholate(){
             chocolate.value = emptyChocolate.value;
             emit('addEvent', 'Add chocolate success');
         }).catch(error => {
+            alert('Failed to update chocolate: ',error.response.status)
             console.error('Failed to update chocolate: ',error.response.status);
         });
 }

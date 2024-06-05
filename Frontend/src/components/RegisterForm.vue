@@ -158,8 +158,6 @@ function Register(event){
         hideDateValidation.value = true
     }
 
-    console.log(canRegister.value)
-    console.log(user.value.username)
     if(canRegister){
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/register', user.value)
             .then( response => {
@@ -169,11 +167,16 @@ function Register(event){
                 }
         }).catch(error => {
         if (error.response) {
-
             if (error.response.status === 400) {
-                console.error("Bad Request:", error.response.data);
-                hideUsernameValidation.value = false;
-                usernameMessage.value = ' * Username is already taken';
+                let errorMsg = error.response.data
+                console.log(errorMsg)
+                if(errorMsg === 'Username'){
+                    hideUsernameValidation.value = false;
+                    usernameMessage.value = ' * Username is already taken';
+                }
+                else{
+                    alert('Failed to register user!')
+                }
             } else {
             console.error("Error response status:", error.response.status);
         }

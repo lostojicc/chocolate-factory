@@ -1,0 +1,87 @@
+package models;
+
+import serializer.ISerializable;
+
+public class Comment implements ISerializable, IIdentifiable {
+	private int id;
+	private int userId;
+	private int factoryId;
+	private String text;
+	private int grade;
+	
+	public Comment() {
+		super();
+	}
+
+	public Comment(int userId, int factoryId, String text, int grade) {
+		super();
+		this.userId = userId;
+		this.factoryId = factoryId;
+		this.text = text;
+		this.grade = grade;
+	}
+
+	@Override
+	public String[] ToCSV() {
+		String[] values = {
+			Integer.toString(id),
+			Integer.toString(userId),
+			Integer.toString(factoryId),
+			text,
+			Integer.toString(grade)
+		};
+		return values;
+	}
+
+	@Override
+	public void FromCSV(String[] values) {
+		// TODO Auto-generated method stub
+		id = Integer.parseInt(values[0]);
+		userId = Integer.parseInt(values[1]);
+		factoryId = Integer.parseInt(values[2]);
+		text = values[3];
+		grade = Integer.parseInt(values[4]);
+	}
+	
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public int getFactoryId() {
+		return factoryId;
+	}
+
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public int getGrade() {
+		return grade;
+	}
+
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
+
+	@Override
+	public int getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+}

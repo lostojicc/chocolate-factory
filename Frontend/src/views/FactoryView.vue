@@ -4,8 +4,8 @@
     </div>
     <div v-if="factory && factory.location && factory.location.address">
         <FactoryInformation :factory="factory"/>
-    <!-- <CommentSection/> -->
         <ChocolateDisplay :factory="factory"/>
+        <CommentSection :factory="factory"/>
     </div>   
     <!-- <div v-else class="modal show" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" style="display: block;">
       <div class="modal-dialog modal-dialog-centered" role="document">

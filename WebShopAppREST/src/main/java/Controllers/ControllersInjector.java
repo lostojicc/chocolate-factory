@@ -39,12 +39,14 @@ public class ControllersInjector {
         FactoryController factoryController = new FactoryController(contextPath);
         LocationController locationController = new LocationController(contextPath);
         AddressController addressController = new AddressController(contextPath);
+        CommentController commentController = new CommentController(contextPath);
 
         registerController(UserController.class, userController);
         registerController(ChocholateController.class, chocholateController);
         registerController(FactoryController.class, factoryController);
         registerController(LocationController.class, locationController);
         registerController(AddressController.class, addressController);
+        registerController(CommentController.class, commentController);
 
         connectControllers();
     }

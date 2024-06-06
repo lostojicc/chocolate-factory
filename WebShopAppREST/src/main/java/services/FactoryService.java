@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -16,13 +17,17 @@ import org.glassfish.jersey.client.authentication.ResponseAuthenticationExceptio
 
 import Controllers.AddressController;
 import Controllers.ChocholateController;
+import Controllers.CommentController;
 import Controllers.ControllersInjector;
 import Controllers.FactoryController;
 import Controllers.LocationController;
+import Controllers.UserController;
 import models.Address;
 import models.Chocholate;
+import models.Comment;
 import models.Factory;
 import models.Location;
+import models.User;
 
 @Path("/factory")
 public class FactoryService {
@@ -44,7 +49,7 @@ public class FactoryService {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		FactoryController controller = conInjector.getController(FactoryController.class);
-		return controller.getAll();
+		return controller.getSorted();
 	}
 	
 	@GET
@@ -65,21 +70,29 @@ public class FactoryService {
 	@GET
     @Path("/location/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Location getLocation(@PathParam("id") int locationId) {
+    public Response getLocation(@PathParam("id") int locationId) {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
-		
 		LocationController controller = conInjector.getController(LocationController.class);
-		return controller.getById(locationId);
+		
+		Location location = controller.getById(locationId);
+		if(location != null)
+			return Response.ok(location).build();
+		else 
+			return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @GET
     @Path("/location/address/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Address getAddress(@PathParam("id") int addressId) {
-    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
-    	
+    public Response getAddress(@PathParam("id") int addressId) {
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
     	AddressController controller = conInjector.getController(AddressController.class);
-    	return controller.getById(addressId);
+    	
+    	Address address = controller.getById(addressId);
+		if(address != null)
+			return Response.ok(address).build();
+		else 
+			return Response.status(Response.Status.NOT_FOUND).build();
     }
     
     @GET
@@ -91,4 +104,32 @@ public class FactoryService {
 		ChocholateController controller = conInjector.getController(ChocholateController.class);
 		return controller.getByFactoryId(factoryId);
 	}
+    
+    @GET
+    @Path("/comments/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getComments(@PathParam("id") int factoryId) {
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	CommentController controller = conInjector.getController(CommentController.class);
+    	
+    	Collection<Comment> comments = controller.getByFactoryId(factoryId);
+		if(comments != null)
+			return Response.ok(comments).build();
+		else 
+			return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+    @GET
+    @Path("/comments/user/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("id") int userId) {
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	UserController controller = conInjector.getController(UserController.class);
+    	
+    	User user = controller.getById(userId);
+		if(user != null)
+			return Response.ok(user).build();
+		else 
+			return Response.status(Response.Status.NOT_FOUND).build();
+    }
 }

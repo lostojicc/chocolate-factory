@@ -30,6 +30,10 @@ public class UserController{
 		return UserDao.GetAll();
 	}
 	
+	public User getById(int id) {
+		return (User) UserDao.GetById(id);
+	}
+	
 	public User GetByUsername(String username) {
 		for(User user: this.GetAll()) {
 			if(user.getUsername().equals(username)) {

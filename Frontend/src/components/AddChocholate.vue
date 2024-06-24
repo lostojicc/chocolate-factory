@@ -243,7 +243,13 @@ function CheckFile(){
 
 function sendChocolate(){
     chocolate.value.factoryId = props.factory.id;
-    axios.post('http://localhost:8080/WebShopAppREST/rest/chocholate/add', chocolate.value).then( response => {
+    axios.post('http://localhost:8080/WebShopAppREST/rest/chocholate/add', chocolate.value, 
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }
+    ).then( response => {
                 if (response.status === 200) {
                     chocolate.value = emptyChocolate.value;
                     console.log(chocolate.value)

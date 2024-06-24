@@ -2,9 +2,9 @@
     <div class="container-fluid menu py-6">
         <div class="container">
             <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
-                <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our Menu</small>
+                <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our Products</small>
                 <h1 class="display-5 mb-5">Best Chocolates in the World
-                    <a class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
+                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
                 </h1>
             </div>
                 <AddChocholate v-if="openForm" @addEvent="handleAddEvent" :editInfo="editInfo" :factory="factory"/>
@@ -27,6 +27,8 @@
     import { defineProps } from 'vue';
     import {ref, onMounted } from 'vue';
     import axios from 'axios';
+
+    const userRole = localStorage.getItem('role') || '';
 
     const props = defineProps({
         factory: {

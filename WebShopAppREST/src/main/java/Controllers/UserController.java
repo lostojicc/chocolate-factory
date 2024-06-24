@@ -44,6 +44,10 @@ public class UserController{
 		return null;
 	}
 	
+	public boolean IsPasswordCorrect(User loggedUser, String password) {
+		return loggedUser.getPassword().equals(password);
+	}
+	
 	public void Save(User user) {
 		UserDao.Save(user);
 	}

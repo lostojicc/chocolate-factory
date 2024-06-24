@@ -1,5 +1,22 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+    import { RouterLink, RouterView, useRouter } from 'vue-router'
+    import { ref, computed, reactive, onMounted } from 'vue';
+
+    const router = useRouter();
+
+    onMounted(() => {
+        router.push("/");
+    });
+
+    const userRole = ref(localStorage.getItem('role') || '');
+    const username = ref(localStorage.getItem('username') || '');
+
+    function signOut(){
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+        location.reload();
+    }
 </script>
 
 <template>
@@ -32,8 +49,10 @@ import { RouterLink, RouterView } from 'vue-router'
                             </div>
                             <a href="contact.html" class="nav-item nav-link">Contact</a> -->
                         </div>
-                        <button class="btn-search btn btn-primary btn-md-square me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>
-                        <RouterLink :to="'/login'"><a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Sign In</a></RouterLink>
+                        
+                        <RouterLink v-if="userRole === ''" :to="'/login'"><a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Sign In</a></RouterLink>
+                        <span v-else class="d-none d-lg-inline-flex justify-content-center align-items-center">{{ username }} | {{ userRole }}<RouterLink class="btn-search btn btn-primary ms-4 btn-md-square rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-user"></i></RouterLink></span>
+                        <button @click="signOut()" class="btn-search btn btn-primary btn-md-square ms-4 me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>
                     </div>
                 </nav>
             </div>
@@ -42,3 +61,4 @@ import { RouterLink, RouterView } from 'vue-router'
 
   <RouterView />
 </template>
+

@@ -29,8 +29,8 @@
                 </div>
                 <div class="col d-flex">
                     <a v-if="chocolate.isAvailable" class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
-                    <a class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
-                    <a class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
+                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
+                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
             </div>
         </div>
@@ -41,6 +41,7 @@
     import { defineProps, defineEmits } from 'vue';
     import axios from 'axios';
 
+    const userRole = localStorage.getItem('role') || '';
     const emit = defineEmits(['editEvent', 'deleteEvent']);
 
     const props = defineProps({

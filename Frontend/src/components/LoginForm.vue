@@ -90,7 +90,7 @@
             localStorage.setItem('role', role);
             location.reload();
         }).catch(error => {
-            
+            console.log(error.response.data)
         });
     }
 

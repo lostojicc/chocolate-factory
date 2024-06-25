@@ -162,6 +162,7 @@ function Register(event){
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/register', user.value)
             .then( response => {
                 if (response.status === 200) {
+                    CreateShoppingCart()
                     alert('Registration succsesfull!')
                     router.push('/login')
                 }
@@ -217,6 +218,17 @@ function RepeatPassword(){
     hideRepeatValidation.value = true
 
     return true;
+}
+
+function CreateShoppingCart(){
+    axios.post('http://localhost:8080/WebShopAppREST/rest/shopping-cart/create', user.value)
+            .then( response => {
+                if (response.status === 200) {
+                    console.log('Shopping cart created')
+                }
+        }).catch(error => {
+            console.error("Error response status:", error.response.status);
+        })
 }
 
 

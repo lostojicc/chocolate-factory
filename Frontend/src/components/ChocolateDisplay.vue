@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent"/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,14 @@
     async function loadChocolates() {
         try {
             const chocolateResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/chocolates/${props.factory.id}`);
-            chocolates.value = chocolateResponse.data;
+            chocolates.value = chocolateResponse.data
+
+            chocolates.value.forEach(chocolate => {
+                if (chocolate.quantity > 0) {
+                    chocolate.isAvailable = true
+                }
+            });
+
         } catch (error) {
             console.error('Error loading chocolates:', error);
         }
@@ -108,6 +115,10 @@
         else{
             openForm.value = false;
         }
+    }
+
+    function handleBuyEvent(data){
+        loadChocolates()
     }
 
     function handleDeleteEvent(data){

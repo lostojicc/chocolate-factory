@@ -15,7 +15,7 @@ import models.ChocholateType;
 
 
 public class ChocholateController {
-private String contextPath;
+	private String contextPath;
 	
 	private DAO CHODAo;
 	

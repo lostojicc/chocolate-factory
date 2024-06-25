@@ -20,15 +20,20 @@
                 </div>
             </div>    
             <div class="row p-3">
-                <div v-if="chocolate.isAvailable == true" class="col-9 d-flex align-items-center">
+                <div v-if="chocolate.isAvailable == true" class="col-5 d-flex align-items-center">
                     <h4 class="text-primary m-2">Available:</h4>
                     <h4 class="text-dark m-2">{{ chocolate.quantity }}</h4>
                 </div>
-                <div v-else class="col-9 d-flex align-items-center">
+                <div v-else class="col-5 d-flex align-items-center">
                     <h4 class="text-dark m-2">Not available</h4>
                 </div>
+                <div v-if="chocolate.isAvailable && userRole==='Customer'" class="col-4 d-flex align-items-center">
+                    <h4 class="text-primary m-2">Buy:</h4>
+                    <input type="number" class="form-control p-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="chocoInstance.quantity"
+                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
+                </div>
                 <div class="col d-flex">
-                    <a v-if="chocolate.isAvailable" class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
+                    <a v-if="chocolate.isAvailable && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
                     <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
                     <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
@@ -38,11 +43,13 @@
 </template>
 
 <script setup>
-    import { defineProps, defineEmits } from 'vue';
+    import { defineProps, defineEmits, ref } from 'vue';
     import axios from 'axios';
 
     const userRole = localStorage.getItem('role') || '';
-    const emit = defineEmits(['editEvent', 'deleteEvent']);
+    const username = localStorage.getItem('username') || '';
+    const emit = defineEmits(['editEvent', 'deleteEvent', 'buyEvent']);
+    const isInputValid = ref(true)
 
     const props = defineProps({
         chocolate: {
@@ -51,12 +58,60 @@
         }
     });
 
+    const chocoInstance = ref({
+	    cartId : 0,
+        chocholateId : props.chocolate.id,
+	    quantity : 1
+    })
+
     function editClick(){
         emit('editEvent', props.chocolate);
     }
 
     function deleteChocolate(){
         emit('deleteEvent', props.chocolate.id); 
+    }
+
+    function shopClick(){
+        if(chocoInstance.value.quantity <= 0 || chocoInstance.value.quantity > props.chocolate.quantity){
+            return;
+        }
+        
+        axios.get(`http://localhost:8080/WebShopAppREST/rest/shopping-cart/getCart/${username}`
+        ).then( response => {
+                if (response.status === 200) {
+                    chocoInstance.value.cartId = response.data
+                    SendChocolateToCart()
+                }
+        }).catch(error => {
+            console.error('Failed to find cart: ',error.response.status);
+        });
+    }
+
+    function SendChocolateToCart(){
+        axios.post('http://localhost:8080/WebShopAppREST/rest/shopping-cart/addChocholate', chocoInstance.value,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }
+        ).then( response => {
+                if (response.status === 200) {
+                    console.log('Added success');
+                    emit('buyEvent', props.chocolate.id); 
+                }
+        }).catch(error => {
+            console.error('Failed to add chocolate to cart: ',error.response.status);
+        });
+    }
+
+    function onInputChange(){
+        if(chocoInstance.value.quantity <= 0 || chocoInstance.value.quantity > props.chocolate.quantity){
+            isInputValid.value = false;
+            return;
+        }
+
+        isInputValid.value = true;
     }
 </script>
 
@@ -65,5 +120,8 @@
     height: 100px; 
     width: 100px;
     object-fit: cover;
+}
+.redBorder{
+    border: red, 1.5px, solid;
 }
 </style>

@@ -7,16 +7,20 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 	private int cartId;
 	private int chocholateId;
 	private int quantity;
+	private Boolean checkedOut;
 	
 	public ChocholateInstance() {
 		super();
+		this.checkedOut = false;
+		this.quantity = 0;
 	}
 	
-	public ChocholateInstance(int CartId, int ChocoId, int quant) {
+	public ChocholateInstance(int CartId, int ChocoId, int quant, Boolean checkedOut) {
 		super();
 		this.cartId = CartId;
 		this.chocholateId = ChocoId;
 		this.quantity = quant;
+		this.checkedOut = checkedOut;
 	}
 	
 	@Override
@@ -26,7 +30,8 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 				Integer.toString(id),
 				Integer.toString(cartId),
 				Integer.toString(chocholateId),
-				Integer.toString(quantity)
+				Integer.toString(quantity),
+				Boolean.toString(checkedOut)
 		};
 		return values;
 	}
@@ -37,6 +42,7 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 		this.cartId = Integer.parseInt(values[1]);
 		this.chocholateId = Integer.parseInt(values[2]);
 		this.quantity = Integer.parseInt(values[3]);
+		this.checkedOut = Boolean.valueOf(values[4]);
 	}
 
 	public int getCartId() {
@@ -73,6 +79,12 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
+
+	public Boolean getCheckedOut() {
+		return checkedOut;
+	}
+
+	public void setCheckedOut(Boolean checkedOut) {
+		this.checkedOut = checkedOut;
+	}
 }

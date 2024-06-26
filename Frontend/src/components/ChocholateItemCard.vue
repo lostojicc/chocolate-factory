@@ -16,33 +16,31 @@
                             <h4 class="text-primary">${{ chocolate.price }}<span class="text-dark">/ {{ chocolate.grams }}g</span></h4>
                         </div>
                     </div>
-                    <p class="mb-0">{{ chocolate.description }}</p>
+                    <h4 class="text-primary"><span class="text-dark">Total price: </span>${{ chocolate.totalPrice.toFixed(2) }}</h4>
                 </div>
             </div>    
-            <div class="row p-3">
-                <div v-if="chocolate.isAvailable == true" class="col-9 d-flex align-items-center">
-                    <h4 class="text-primary m-2">Available:</h4>
-                    <h4 class="text-dark m-2">{{ chocolate.quantity }}</h4>
-                </div>
-                <div v-else class="col-9 d-flex align-items-center">
-                    <h4 class="text-dark m-2">Not available</h4>
-                </div>
-                <div class="col d-flex">
-                    <a v-if="chocolate.isAvailable" class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fas fa-shopping-bag"></i></a>
-                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
-                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
-                </div>
+            <div class="row p-2 align-items-center">
+            <div class="col d-flex align-items-center">
+                <h4 class="text-primary m-2">Quantity:</h4>
+                <input type="number" class="form-control p-2 w-25" placeholder="Quantity" min="1" max="10000" step="1" v-model="quantity"
+                v-bind:class="{ redBorder: !isInputValid, 'border-primary': isInputValid }" @input="onInputChange"/>
+                <h4 class="text-primary m-2"> / {{ chocolate.maxQuantity }}</h4>
             </div>
+            <div class="col-auto d-flex justify-content-end">
+                <a class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick"><i class="fas fa-pencil-alt"></i></a>
+                <a class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate"><i class="fas fa-trash-alt"></i></a>
+            </div>
+        </div>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { defineProps, defineEmits } from 'vue';
+    import { defineProps, defineEmits, ref, onMounted } from 'vue';
     import axios from 'axios';
 
     const userRole = localStorage.getItem('role') || '';
-    const emit = defineEmits(['editEvent', 'deleteEvent']);
+    const emit = defineEmits(['loadEvent']);
 
     const props = defineProps({
         chocolate: {
@@ -51,13 +49,65 @@
         }
     });
 
+    const quantity = ref(0)
+    const isInputValid = ref(true)
+
+    onMounted(() => {
+        quantity.value = props.chocolate.quantity;
+    }
+    );
+
     function editClick(){
-        emit('editEvent', props.chocolate);
+        if(!isInputValid.value)
+            return;
+
+        if(quantity.value === props.chocolate.quantity)
+            return;
+
+        props.chocolate.quantity = quantity.value;
+
+        axios.post('http://localhost:8080/WebShopAppREST/rest/shopping-cart/updateChocholate', props.chocolate,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }
+        ).then( response => {
+                if (response.status === 200) {
+                    console.log('Update success');
+                    emit('loadEvent', props.chocolate.id); 
+                }
+        }).catch(error => {
+            console.error('Failed to update chocolate quantity: ',error.response.status);
+        });
     }
 
     function deleteChocolate(){
-        emit('deleteEvent', props.chocolate.id); 
+        axios.delete(`http://localhost:8080/WebShopAppREST/rest/shopping-cart/deleteChocholate/${props.chocolate.id}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }
+        ).then( response => {
+                if (response.status === 200) {
+                    console.log('Delete success');
+                    emit('loadEvent', props.chocolate.id); 
+                }
+        }).catch(error => {
+            console.error('Failed to delete chocolate: ',error.response.status);
+        });        
     }
+
+    function onInputChange(){
+        if(quantity.value <= 0 || quantity.value > props.chocolate.maxQuantity){
+            isInputValid.value = false;
+            return;
+        }
+
+        isInputValid.value = true;
+    }
+
 </script>
 
 <style scoped>
@@ -65,5 +115,8 @@
     height: 100px; 
     width: 100px;
     object-fit: cover;
+}
+.redBorder{
+    border: red, 1.5px, solid;
 }
 </style>

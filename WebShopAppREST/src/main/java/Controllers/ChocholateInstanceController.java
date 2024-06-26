@@ -29,19 +29,24 @@ public class ChocholateInstanceController {
 		ChocholateInstanceDAO.Save(chocoInstance);
 	}
 	
-	public ArrayList<ChocholateInstance> GetByCartId(){
+	public ChocholateInstance GetById(int id) {
+		return (ChocholateInstance) ChocholateInstanceDAO.GetById(id);
+	}
+	
+	public ArrayList<ChocholateInstance> GetNotCheckedByCartId(int cartId){
 		ArrayList<ChocholateInstance> chocholates = new ArrayList<ChocholateInstance>();
 		
 		for(ChocholateInstance choco : this.GetAll()) {
-			chocholates.add(choco);
+			if(choco.getCartId() == cartId && !choco.getCheckedOut())
+				chocholates.add(choco);
 		}
 		
 		return chocholates;
 	}
 	
-	public ChocholateInstance GetByCartAndChocholateId(int cartId, int chocholateId) {	
+	public ChocholateInstance GetByNotCheckedCartAndChocholateId(int cartId, int chocholateId) {	
 		for(ChocholateInstance choco : this.GetAll()) {
-			if(choco.getCartId() == cartId && choco.getChocholateId() == chocholateId) {
+			if(choco.getCartId() == cartId && choco.getChocholateId() == chocholateId && !choco.getCheckedOut()) {
 				return choco;
 			}
 		}
@@ -53,4 +58,7 @@ public class ChocholateInstanceController {
 		ChocholateInstanceDAO.Update(choco);
 	}
 	
+	public Boolean Delete(ChocholateInstance choco) {
+		return ChocholateInstanceDAO.Delete(choco);
+	}
 }

@@ -1,8 +1,11 @@
 package services;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -19,6 +22,7 @@ import Controllers.ChocholateInstanceController;
 import Controllers.ControllersInjector;
 import Controllers.ShoppingCartController;
 import Controllers.UserController;
+import dto.ChocholateInstanceDTO;
 import models.Chocholate;
 import models.ChocholateInstance;
 import models.ShoppingCart;
@@ -58,8 +62,36 @@ public class ShoppingCartService {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		return Response.ok().entity(shoppingCart.getId()).build();
+		return Response.ok().entity(shoppingCart).build();
 	}
+	
+	@GET
+	@Path("/getChocholates/{cartId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetChocholateInstances(@PathParam("cartId") int cartId ,@HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		ChocholateInstanceController chochoInstanceController = conInjector.getController(ChocholateInstanceController.class);
+		ChocholateController chochoController = conInjector.getController(ChocholateController.class);
+		
+		ArrayList<ChocholateInstanceDTO> chocholates = new ArrayList<ChocholateInstanceDTO>();
+		try {
+			for(ChocholateInstance chochoInstance : chochoInstanceController.GetNotCheckedByCartId(cartId)) {
+				Chocholate chocho = chochoController.GetById(chochoInstance.getChocholateId());
+			
+				chocholates.add(new ChocholateInstanceDTO(chocho, chochoInstance));
+			}
+			
+			return Response.ok().entity(chocholates).build();
+			
+		}catch(Exception e) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
 	
 	@POST
 	@Path("/create")
@@ -98,6 +130,39 @@ public class ShoppingCartService {
 		return Response.ok().build();
 	}
 	
+	@POST
+	@Path("/updateChocholate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocholate(ChocholateInstanceDTO chochoInstanceDTO, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		ShoppingCartController shoppingCartContr = conInjector.getController(ShoppingCartController.class);
+		
+		if(!shoppingCartContr.UpdateChocholateInstance(chochoInstanceDTO)) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		return Response.ok().build();
+	}
 	
-	
+	@DELETE
+	@Path("/deleteChocholate/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocholate(@PathParam("id") int id, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		ShoppingCartController shoppingCartContr = conInjector.getController(ShoppingCartController.class);
+		
+		if(!shoppingCartContr.DeleteChocholateInstance(id)) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		return Response.ok().build();
+	}
 }

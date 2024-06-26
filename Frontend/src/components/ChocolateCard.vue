@@ -20,20 +20,20 @@
                 </div>
             </div>    
             <div class="row p-3">
-                <div v-if="chocolate.isAvailable == true" class="col-5 d-flex align-items-center">
+                <div v-if="chocolate.quantity != 0" class="col-5 d-flex align-items-center">
                     <h4 class="text-primary m-2">Available:</h4>
                     <h4 class="text-dark m-2">{{ chocolate.quantity }}</h4>
                 </div>
                 <div v-else class="col-5 d-flex align-items-center">
                     <h4 class="text-dark m-2">Not available</h4>
                 </div>
-                <div v-if="chocolate.isAvailable && userRole==='Customer'" class="col-4 d-flex align-items-center">
+                <div v-if="chocolate.quantity != 0 && userRole==='Customer'" class="col-4 d-flex align-items-center">
                     <h4 class="text-primary m-2">Buy:</h4>
                     <input type="number" class="form-control p-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="chocoInstance.quantity"
                     v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
                 </div>
                 <div class="col d-flex">
-                    <a v-if="chocolate.isAvailable && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
+                    <a v-if="chocolate.quantity != 0 && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
                     <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
                     <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
@@ -80,7 +80,8 @@
         axios.get(`http://localhost:8080/WebShopAppREST/rest/shopping-cart/getCart/${username}`
         ).then( response => {
                 if (response.status === 200) {
-                    chocoInstance.value.cartId = response.data
+                    let cart = response.data
+                    chocoInstance.value.cartId = cart.id
                     SendChocolateToCart()
                 }
         }).catch(error => {

@@ -3,6 +3,7 @@ package Controllers;
 import java.util.ArrayList;
 
 import dao.DAO;
+import dto.ChocholateInstanceDTO;
 import models.Chocholate;
 import models.ChocholateInstance;
 import models.ShoppingCart;
@@ -86,7 +87,7 @@ public class ShoppingCartController {
 		chochoControler.Update(chocholate);
 		this.Update(shoppingCart);
 		
-		ChocholateInstance oldChoco = chochoInstanceContr.GetByCartAndChocholateId(chochoInstance.getCartId(), chochoInstance.getChocholateId());
+		ChocholateInstance oldChoco = chochoInstanceContr.GetByNotCheckedCartAndChocholateId(chochoInstance.getCartId(), chochoInstance.getChocholateId());
 		if(oldChoco == null) {
 			chochoInstanceContr.Save(chochoInstance);
 		}
@@ -97,4 +98,57 @@ public class ShoppingCartController {
 		
 		return true;
 	}
+	
+	public Boolean UpdateChocholateInstance(ChocholateInstanceDTO chochoInstanceDTO) {
+		Chocholate chocholate = chochoControler.GetById(chochoInstanceDTO.getChocholateId());
+		ShoppingCart shoppingCart = this.GetById(chochoInstanceDTO.getCartId());
+		ChocholateInstance oldChocoInstance = chochoInstanceContr.GetById(chochoInstanceDTO.getId());
+		
+		if(shoppingCart == null || chocholate == null || oldChocoInstance == null) {
+			return false;
+		}
+		
+		int maxQuantity = oldChocoInstance.getQuantity() + chocholate.getQuantity();
+		
+		if(chochoInstanceDTO.getQuantity() < 0 || chochoInstanceDTO.getQuantity() > maxQuantity) {
+			return false;
+		}
+		
+		chocholate.setQuantity(maxQuantity - chochoInstanceDTO.getQuantity());
+		oldChocoInstance.setQuantity(chochoInstanceDTO.getQuantity());
+		
+		shoppingCart.setPrice(shoppingCart.getPrice() - chochoInstanceDTO.getTotalPrice());
+		shoppingCart.setPrice(shoppingCart.getPrice() + oldChocoInstance.getQuantity() * chocholate.getPrice());
+		
+		this.Update(shoppingCart);
+		chochoControler.Update(chocholate);
+		chochoInstanceContr.Update(oldChocoInstance);
+		
+		return true;
+	}
+	
+	public Boolean DeleteChocholateInstance(int chochoInstanceId) {
+		ChocholateInstance chocoInstance = chochoInstanceContr.GetById(chochoInstanceId);
+		Chocholate chocholate = chochoControler.GetById(chocoInstance.getChocholateId());
+		ShoppingCart shoppingCart = this.GetById(chocoInstance.getCartId());
+		
+		
+		if(shoppingCart == null || chocholate == null || chocoInstance == null) {
+			return false;
+		}
+		
+		chocholate.setQuantity(chocholate.getQuantity() + chocoInstance.getQuantity());
+		shoppingCart.setPrice(shoppingCart.getPrice() - chocoInstance.getQuantity() * chocholate.getPrice());		
+		
+		if(!chochoInstanceContr.Delete(chocoInstance)) {
+			return false;
+		}
+		
+		this.Update(shoppingCart);
+		chochoControler.Update(chocholate);
+		
+		return true;
+	}
+	
+	
 }

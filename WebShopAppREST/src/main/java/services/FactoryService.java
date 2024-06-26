@@ -5,13 +5,17 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.client.authentication.ResponseAuthenticationException;
 
@@ -22,12 +26,15 @@ import Controllers.ControllersInjector;
 import Controllers.FactoryController;
 import Controllers.LocationController;
 import Controllers.UserController;
+import dto.FactoryDTO;
 import models.Address;
 import models.Chocholate;
 import models.Comment;
 import models.Factory;
 import models.Location;
 import models.User;
+import models.UserRole;
+import utils.JWTUtils;
 
 @Path("/factory")
 public class FactoryService {
@@ -94,6 +101,21 @@ public class FactoryService {
 		else 
 			return Response.status(Response.Status.NOT_FOUND).build();
     }
+    
+    @POST
+	@Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addFactory(FactoryDTO factory, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Administrator))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		FactoryController factoryController = conInjector.getController(FactoryController.class);
+		
+		Factory savedFactory = factoryController.Save(factory);
+		return Response.ok().entity(savedFactory).build();
+	}
     
     @GET
 	@Path("/chocolates/{id}")

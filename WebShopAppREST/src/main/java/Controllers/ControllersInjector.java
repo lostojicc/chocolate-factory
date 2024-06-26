@@ -28,9 +28,15 @@ public class ControllersInjector {
     private void connectControllers() {
         UserController userController = getController(UserController.class);
         ChocholateController chocholateController = getController(ChocholateController.class);
-
+        FactoryController factoryController = getController(FactoryController.class);
+        LocationController locationController = getController(LocationController.class);
+        AddressController addressController = getController(AddressController.class);
+        
+        
         userController.setDependency(/*npr chocholateController*/);
         chocholateController.setDependency();
+        locationController.setDependency(addressController);
+        factoryController.setDependency(locationController);
     }
 
     private void initializeControllers() {

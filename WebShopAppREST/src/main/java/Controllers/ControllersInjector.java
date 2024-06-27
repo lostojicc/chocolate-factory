@@ -30,10 +30,12 @@ public class ControllersInjector {
         ChocholateController chocholateController = getController(ChocholateController.class);
         ShoppingCartController shopingCartControler = getController(ShoppingCartController.class);
         ChocholateInstanceController chochoInstanceControler = getController(ChocholateInstanceController.class);
+        OrderController orderController = getController(OrderController.class);
 
         userController.setDependency(/*npr chocholateController*/);
         chocholateController.setDependency();
-        shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController);
+        shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController,orderController);
+        orderController.setDependency(chochoInstanceControler);
     }
 
     private void initializeControllers() {
@@ -45,6 +47,7 @@ public class ControllersInjector {
         CommentController commentController = new CommentController(contextPath);
         ShoppingCartController shoppingCartControler = new ShoppingCartController(contextPath);
         ChocholateInstanceController chochoInstanceControler = new ChocholateInstanceController(contextPath);
+        OrderController orderController = new OrderController(contextPath);
 
         registerController(UserController.class, userController);
         registerController(ChocholateController.class, chocholateController);
@@ -54,6 +57,7 @@ public class ControllersInjector {
         registerController(CommentController.class, commentController);
         registerController(ShoppingCartController.class, shoppingCartControler);
         registerController(ChocholateInstanceController.class, chochoInstanceControler);
+        registerController(OrderController.class, orderController);
         
         connectControllers();
     }

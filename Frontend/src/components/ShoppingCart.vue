@@ -22,10 +22,12 @@
             <div class="col">
               <h3 class="mb-4">Total price: {{cart.price.toFixed(2)}}$</h3>
             </div>
-            <div class="w-100"></div>
+            <div class="w-100">
+                
+            </div>
             <div class="col">
               <button type="submit" class="btn btn-primary btn-lg mx-5 mb-5 rounded-pill" v-on:click="ClearButton">Clear Cart</button>
-              <button type="submit" class="btn btn-primary btn-lg mx-5 mb-5 rounded-pill" v-on:click="SubmitButton">Checkout</button>
+              <button type="submit" class="btn btn-primary btn-lg mx-5 mb-5 rounded-pill" v-on:click="CheckoutButton">Checkout</button>
             </div>
           </div>
         </div>
@@ -43,7 +45,7 @@ const userRole = localStorage.getItem('role') || '';
 const username = localStorage.getItem('username') || '';
 
 const cart = ref({
-  id: 0,
+    id: 0,
 	userId: 0,
 	price: 0
 })
@@ -121,5 +123,24 @@ function DeleteChocholate(id){
     });
 }
 
-</script>
+function CheckoutButton(){
+    if(chocolates.value.length === 0){
+        alert('Cart is empty, nothing to checkout!');
+        return;
+    }
 
+    axios.post('http://localhost:8080/WebShopAppREST/rest/shopping-cart/checkout', cart.value,{
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        }
+    }).then(response => {
+        if (response.status === 200) {
+            handleLoadEvent()
+            console.log('Checkout success');
+        }
+    }).catch(error => {
+        console.error(error.response.data + " : " + error.response.status)
+    });
+}
+
+</script>

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import serializer.ISerializable;
 
-public class Shopping implements IIdentifiable, ISerializable {
+public class Order implements IIdentifiable, ISerializable {
 	private int id;
 	private String identification;
 	private ArrayList<Integer> chocholateIds;
@@ -15,15 +15,15 @@ public class Shopping implements IIdentifiable, ISerializable {
 	private Date dateTime;
 	private double price;
 	private int userId;
-	private ShoppingState state;
+	private OrderState state;
 	
-	public Shopping() {
+	public Order() {
 		super();
 		chocholateIds = new ArrayList<Integer>();
 	}
 
-	public Shopping(String identification, ArrayList<Integer> chocholateIds, int factoryId, Date dateTime, double price,
-			int userId, ShoppingState state) {
+	public Order(String identification, ArrayList<Integer> chocholateIds, int factoryId, Date dateTime, double price,
+			int userId, OrderState state) {
 		super();
 		this.identification = identification;
 		this.chocholateIds = chocholateIds;
@@ -36,11 +36,12 @@ public class Shopping implements IIdentifiable, ISerializable {
 
 	@Override
 	public String[] ToCSV() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String[] values = new String[chocholateIds.size() + 7];
 		values[0] = Integer.toString(id);
 		values[1] = identification;
 		values[2] = Integer.toString(factoryId);
-		values[3] = dateTime.toString();
+		values[3] = sdf.format(dateTime);
 		values[4] = Double.toString(price);
 		values[5] = Integer.toString(userId);
 		values[6] = state.name();
@@ -68,7 +69,7 @@ public class Shopping implements IIdentifiable, ISerializable {
 		 }
 	     price = Double.parseDouble(values[4]);
 	     userId = Integer.parseInt(values[5]);
-	     state = ShoppingState.valueOf(values[6]);
+	     state = OrderState.valueOf(values[6]);
 	     
 	     for(int i=7;i<values.length;i++) {
 	    	 chocholateIds.add(Integer.parseInt(values[i]));
@@ -123,11 +124,11 @@ public class Shopping implements IIdentifiable, ISerializable {
 		this.userId = userId;
 	}
 
-	public ShoppingState getState() {
+	public OrderState getState() {
 		return state;
 	}
 
-	public void setState(ShoppingState state) {
+	public void setState(OrderState state) {
 		this.state = state;
 	}
 

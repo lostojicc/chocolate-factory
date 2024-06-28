@@ -20,11 +20,13 @@ import javax.ws.rs.core.Response.Status;
 import Controllers.ChocholateController;
 import Controllers.ChocholateInstanceController;
 import Controllers.ControllersInjector;
+import Controllers.CustomerController;
 import Controllers.ShoppingCartController;
 import Controllers.UserController;
 import dto.ChocholateInstanceDTO;
 import models.Chocholate;
 import models.ChocholateInstance;
+import models.CustomerType;
 import models.ShoppingCart;
 import models.User;
 import models.UserRole;
@@ -63,6 +65,22 @@ public class ShoppingCartService {
 		}
 		
 		return Response.ok().entity(shoppingCart).build();
+	}
+	
+	@GET
+	@Path("/getDiscount/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetDiscountByUsername(@PathParam("username") String username) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		CustomerController customerContr = conInjector.getController(CustomerController.class); 
+		
+		CustomerType customerType = customerContr.GetByUsername(username);
+		if(customerType == null) {
+			return Response.status(Status.BAD_REQUEST).build(); 
+		}
+		
+		return Response.ok().entity(customerType).build();
 	}
 	
 	@GET

@@ -16,9 +16,11 @@ public class OrderController {
 	private DAO OrderDAO;
 	
 	private ChocholateInstanceController chochoInstanceController;
+	private CustomerController customerController;
 	
-	public void setDependency(ChocholateInstanceController chochoInstCont) {
+	public void setDependency(ChocholateInstanceController chochoInstCont, CustomerController customerContr) {
 		this.chochoInstanceController = chochoInstCont;
+		this.customerController = customerContr;
 	}
 	
 	public OrderController(String context) {
@@ -33,6 +35,13 @@ public class OrderController {
 			Date currentDate = Date.from(now);
 		
 			Order order = new Order(uniqueKey, chocholateIds, factoryId, currentDate, cart.getPrice(), cart.getUserId(), OrderState.Processing);
+			
+			double discount = customerController.GetDiscount(order.getUserId());
+			
+			customerController.AddPointsForOrder(order);
+			
+			order.setPrice(order.getPrice() - order.getPrice() * discount);
+			
 			OrderDAO.Save(order);
 		
 			return true;
@@ -54,6 +63,21 @@ public class OrderController {
         return uniqueString.substring(0, 10);
 	}
 	
+	public ArrayList<Order> GetAll(){
+		return OrderDAO.GetAll();
+	}
+	
+	public ArrayList<Order> GetByUserId(int userId){
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		for(Order o : this.GetAll()) {
+			if(o.getUserId() == userId) {
+				list.add(o);
+			}
+		}
+		
+		return list;
+	} 
 	
 	
 }

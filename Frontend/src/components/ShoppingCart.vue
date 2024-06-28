@@ -20,7 +20,8 @@
         <div class="container text-center">
           <div class="row">
             <div class="col">
-              <h3 class="mb-4">Total price: {{cart.price.toFixed(2)}}$</h3>
+              <h3 class="mb-4">Total price: <span v-bind:class="{crossed : customerType.discount !== 0.0}">{{cart.price.toFixed(2)}}</span>
+                <span class="text-primary mx-3" v-if="customerType.discount !== 0.0">{{discountedPrice.toFixed(2)}}</span>$</h3>
             </div>
             <div class="w-100">
                 
@@ -34,7 +35,11 @@
     </div>
 </template>
 
-
+<style scoped>
+.crossed {
+    text-decoration: line-through;
+  }
+</style>
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -50,11 +55,19 @@ const cart = ref({
 	price: 0
 })
 
+const discountedPrice = ref(0.0)
+
+const customerType = ref({
+    typeName: 'None',
+	discount: 0.0
+})
+
 const chocolates = ref([])
 
 onMounted(async () => {
     try {
         await loadCart();
+        await loadCustomerType();
         await loadChocolates();
     } catch (error) {
         console.error('Error during initialization: ', error);
@@ -69,6 +82,19 @@ async function loadCart(){
         }
     } catch (error) {
         console.error('Failed to find cart: ', error.response?.status);
+        throw error; 
+    }
+}
+
+async function loadCustomerType(){
+    try {
+        const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/shopping-cart/getDiscount/${username}`);
+        if (response.status === 200) {
+            customerType.value = response.data;
+            discountedPrice.value = cart.value.price - cart.value.price * customerType.value.discount;
+        }
+    } catch (error) {
+        console.error('Failed to find customer type: ', error.response?.status);
         throw error; 
     }
 }
@@ -92,6 +118,7 @@ async function loadChocolates() {
   async function handleLoadEvent(data){
       try {
         await loadCart();
+        await loadCustomerType();
         await loadChocolates();
       } catch (error) {
         console.error('Error during refreshing: ', error);

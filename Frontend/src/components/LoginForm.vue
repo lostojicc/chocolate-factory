@@ -25,7 +25,7 @@
 
                                 </div>
                                 <div class="col-lg-6 col-md-6">
-                                    <input type="text" v-model="user.password" class="form-control border-primary p-2" placeholder="Enter Your Password">
+                                    <input type="password" v-model="user.password" class="form-control border-primary p-2" placeholder="Enter Your Password">
                                 </div>
                                 <div class="col-lg-3 col-md-6">
 

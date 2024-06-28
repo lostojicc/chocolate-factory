@@ -75,11 +75,16 @@
                                 </div>
 
                             </div>
-                            <div class="row text-center mb-1 mt-5">
+                            <div class="row text-center mt-5">
                                 <div class="m-2">
                                     <div class="border-bottom border-primary d-inline-block"><h4>Profile information:</h4></div>
                                 </div>
                             </div>
+
+                            <div class="row text-center mb-4">
+                                <span>Data change will redirect you to login</span>
+                            </div>
+
                             <div v-if="isPasswordCorrect === 0 || isPasswordCorrect === 2" class="row form mt-1">
                                 <div class="col-3"></div>
                                 <div class="col-6 d-flex align-items-center justify-content-center">
@@ -238,7 +243,19 @@ async function Update(data){
     }).catch(error => {
         console.error(error.response.data + " | Error status: " + error.response.status);
     });
-    load()
+    if(data == 5 || data == 6){
+        signOut()
+    }
+    else{
+        load()
+    }
+}
+
+function signOut(){
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    router.push("/login")
 }
 
 </script>

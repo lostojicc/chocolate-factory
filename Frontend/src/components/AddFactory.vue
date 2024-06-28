@@ -1,5 +1,6 @@
 <template>
-    <div class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
+    <RegisterForm v-if="registerFormOpen" :factory="factory" @registeredManagerEvent="registerManager"/>
+    <div v-show="!registerFormOpen" class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
         <div class="container">
             <div class="p-5 bg-light rounded contact-form">
                 <div class="row g-4">
@@ -30,7 +31,17 @@
                                 <p>{{ factory.address.street }}, {{ factory.address.city }}, {{ factory.address.state }}</p>
                             </div>
                         </div>
-                        
+                        <div class="d-inline-flex align-items-center p-4 w-100 border border-primary rounded">
+                            <i class="fa fa-user fa-2x text-primary me-4"></i>
+                            <h4 class="me-4 mt-1">Manager</h4>
+                            <select v-if="managers.length != 0 && !managerRegistered" id="chocolateType" @change="testtest()" class="form-select border-primary p-2" aria-label="Chocolate type" v-model="factory.manager">
+                                <option v-for="m in managers" :key="m.id" :value="m">
+                                    {{ m.name }} {{ m.surname }}
+                                </option>`
+                            </select>
+                            <button v-if="managers.length == 0 && !managerRegistered" @click="registerFormOpen = !registerFormOpen" class="btn btn-primary form-control border-primary bg-primary rounded-pill">Register new manager</button>
+                            <h4 v-if="managerRegistered" class="text-primary mt-1">{{ factory.manager.name }} {{ factory.manager.surname }}</h4>
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-5">     
                         <div id="map" class="map d-inline-flex w-100 border border-primary p-4 rounded mb-4"></div>  
@@ -47,7 +58,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import axios from 'axios';
     import 'ol/ol.css';
     import Map from 'ol/Map';
@@ -61,9 +72,17 @@
     import Point from 'ol/geom/Point';
     import { Icon, Style } from 'ol/style';
     import locationDot from '../img/location-dot-solid.svg';
+import RegisterForm from './RegisterForm.vue';
 
     let map, vectorSource, vectorLayer;
 
+    //const mapKey = ref(0);
+
+    function testtest(){
+        console.log(factory.value.manager);
+    }
+
+    const managers = ref([]);
     const factory = ref({
         name: '',
         openTime: '',
@@ -80,14 +99,30 @@
         location: {
             latitude: 0,
             longitude: 0
-        }
+        },
+        manager: null
     });
+
+    const managerRegistered = ref(false);
+    const registerFormOpen = ref(false);
+
+    function registerManager(manager){
+        factory.value.manager = manager;
+        managerRegistered.value = true;
+        registerFormOpen.value = false;
+    }
 
     const selectedImage = ref(null);
 
     function handleFileUpload(event){
         selectedImage.value = event.target.files[0];
     }
+
+    // watch(registerFormOpen, (newVal, oldVal) => {
+    //     if (!newVal && oldVal) {
+    //         mapKey.value++; // Force Vue to recreate the map component
+    // }
+    // });
 
     function saveImage(event){
         event.preventDefault();
@@ -126,9 +161,22 @@
         })
     }
 
-    onMounted(() => {
+    async function fetchManagers(){
+        try {
+            const response = await axios.get("http://localhost:8080/WebShopAppREST/rest/user/getFreeManagers");
+            managers.value = response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    onMounted(async () => {
         initializeMap();
+        await fetchManagers();
+        console.log(managers.value);
     });
+
+    
 
     const initializeMap = () => {
         vectorSource = new VectorSource();
@@ -200,6 +248,6 @@
 <style>
     #map {
         width: 100%;
-        height: 420px;
+        height: 455px;
     }
 </style>

@@ -9,20 +9,23 @@ import dto.FactoryDTO;
 import models.Factory;
 import models.Location;
 import models.OpenStatus;
+import models.User;
 
 public class FactoryController {
 	private String contextPath;
 	private DAO factoryDao;
 	
 	private LocationController locationController;
+	private UserController userController;
 	
 	public FactoryController(String contextPath) {
 		this.contextPath = contextPath;
 		factoryDao = new DAO<Factory>(contextPath, Factory.class);
 	}
 	
-	public void setDependency(LocationController locationController) {
+	public void setDependency(LocationController locationController, UserController userController) {
 		this.locationController = locationController;
+		this.userController = userController;
 	}
 			
 	
@@ -40,8 +43,17 @@ public class FactoryController {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		
+		Factory newFactory = (Factory) factoryDao.Save(factory.toModel());
+		User manager = factory.getManager();
+		manager.setFactoryId(newFactory.getId());
+		
+		if(userController.getById(manager.getId()) == null)
+			userController.Save(manager);
+		else 
+			userController.update(manager);
 			
-		return (Factory) factoryDao.Save(factory.toModel());
+		return newFactory;
 	}
 	
 	public Collection<Factory> getSorted(){

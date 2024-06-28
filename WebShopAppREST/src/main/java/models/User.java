@@ -16,6 +16,7 @@ public class User implements IIdentifiable, ISerializable {
 	protected Gender gender;
 	protected LocalDate dateOfBirth;
 	protected UserRole role;
+	protected int factoryId;
 	// protected?
 	
 	public User() {
@@ -45,7 +46,8 @@ public class User implements IIdentifiable, ISerializable {
 				surname,
 				gender.name(),
 				dateOfBirth.toString(),
-				role.name()
+				role.name(),
+				Integer.toString(factoryId)
 		};
 		return values;
 	}
@@ -60,6 +62,7 @@ public class User implements IIdentifiable, ISerializable {
 		this.gender = Gender.valueOf(values[5]);
 		this.dateOfBirth = LocalDate.parse(values[6]);
 		this.role = UserRole.valueOf(values[7]);
+		this.factoryId = Integer.parseInt(values[8]);
 	}
 
 	public int getId() {
@@ -125,4 +128,14 @@ public class User implements IIdentifiable, ISerializable {
 	public void setRole(UserRole role) {
 		this.role = role;
 	}
+
+	public int getFactoryId() {
+		return factoryId;
+	}
+
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
+	}
+	
+	
 }

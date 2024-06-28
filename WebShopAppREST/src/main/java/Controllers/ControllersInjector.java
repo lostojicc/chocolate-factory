@@ -36,7 +36,7 @@ public class ControllersInjector {
         userController.setDependency(/*npr chocholateController*/);
         chocholateController.setDependency();
         locationController.setDependency(addressController);
-        factoryController.setDependency(locationController);
+        factoryController.setDependency(locationController, userController);
     }
 
     private void initializeControllers() {

@@ -2,10 +2,12 @@ package dto;
 
 import java.time.LocalTime;
 
+import Controllers.UserController;
 import models.Address;
 import models.Factory;
 import models.Location;
 import models.OpenStatus;
+import models.User;
 
 public class FactoryDTO {
 	private int id;
@@ -17,6 +19,7 @@ public class FactoryDTO {
 	private double rating;
 	private Location location;
 	private Address address;
+	private User manager;
 	
 	public FactoryDTO() {
 		
@@ -108,6 +111,14 @@ public class FactoryDTO {
 		this.address = address;
 	}
 	
+	public User getManager() {
+		return manager;
+	}
+
+	public void setManager(User manager) {
+		this.manager = manager;
+	}
+
 	public Factory toModel() {
 		return new Factory(name, openTime, closeTime, status, location.getId(), imagePath, rating);
 	}

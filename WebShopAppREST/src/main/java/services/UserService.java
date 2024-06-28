@@ -50,6 +50,17 @@ public class UserService {
 		return userCont.GetAll();
 	}
 	
+	@GET
+	@Path("/getFreeManagers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<User> getFreeManagers(){
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		return userCont.getFreeManagers();
+	}
+	
 	@POST
 	@Path("/register")
 	@Produces(MediaType.APPLICATION_JSON)

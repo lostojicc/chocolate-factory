@@ -8,8 +8,9 @@
                     <div class="col-10">
                         <div class="border-bottom border-top border-primary bg-light py-5 px-4">
                             <div class="text-center">
-                                <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Welcome</small>
-                                <h1 class="display-5 mb-5">Sign up</h1>
+                                <small v-if="props.factory == null" class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Welcome</small>
+                                <h1 v-if="props.factory == null" class="display-5 mb-5">Sign up</h1>
+                                <h1 v-if="props.factory != null" class="display-5 mb-5">Register new manager</h1>
                             </div>
                             <div class="row g-4 form">
                                 <div class="col-1">
@@ -87,9 +88,18 @@
 
 <script setup>
 import axios  from 'axios';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, defineProps, defineEmits} from 'vue';
 import { useRouter } from 'vue-router';
 
+const emit = defineEmits(['registeredManagerEvent']);
+
+const props = defineProps({
+        factory: {
+            type: Object,
+            required: false,
+            default: null
+        }
+    });
 
 const router = useRouter();
 
@@ -101,6 +111,7 @@ const user = ref({
     gender: 'Male',
     dateOfBirth: '',
     role: 'Customer',
+    factoryId: 0
 })
 
 const repeatedPassword = ref('')
@@ -159,6 +170,12 @@ function Register(event){
     }
 
     if(canRegister){
+        if(props.factory != null){
+            user.value.role = 'Manager';
+            props.factory.manager = user.value;
+            emit('registeredManagerEvent', user)
+            return;
+        }
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/register', user.value)
             .then( response => {
                 if (response.status === 200) {

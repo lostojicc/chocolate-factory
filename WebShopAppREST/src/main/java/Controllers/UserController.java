@@ -13,7 +13,6 @@ import models.UserRole;
 public class UserController{
 	
 	private String contextPath;
-	
 	private DAO UserDao;
 	
 	public void setDependency() {
@@ -33,6 +32,10 @@ public class UserController{
 	
 	public User getById(int id) {
 		return (User) UserDao.GetById(id);
+	}
+	
+	public Boolean Update(User user) {
+		return UserDao.Update(user);
 	}
 	
 	public User GetByUsername(String username) {

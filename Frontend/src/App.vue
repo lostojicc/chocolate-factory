@@ -51,9 +51,20 @@
                         </div>
                         
                         <RouterLink v-if="userRole === ''" :to="'/login'"><a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Sign In</a></RouterLink>
-                        <span v-else class="d-none d-lg-inline-flex justify-content-center align-items-center">{{ username }} | {{ userRole }}<RouterLink class="btn-search btn btn-primary ms-4 btn-md-square rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-user"></i></RouterLink></span>
+                        <span v-else class="d-none d-lg-inline-flex justify-content-center align-items-center">{{ username }} | {{ userRole }}
+                            <div class="nav-item dropdown">
+                                <a href="#" class="btn-search btn btn-primary btn-md-square ms-4 w-75 rounded-pill d-flex justify-content-between" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-chevron-down"></i>
+                                </a>
+                            <div class="dropdown-menu bg-light p-2" style="min-width: 100px;">
+                                <RouterLink class="dropdown-item" :to="'/profile'">Profile</RouterLink>
+                                <RouterLink v-if="userRole === 'Customer' || userRole === 'Manager'" class="dropdown-item" :to="'/orders'">Orders</RouterLink>
+                                <a href="#" class="dropdown-item" @click="signOut()">Sign out</a>
+                            </div>
+                            </div>
+                        </span>
                         <RouterLink v-if="userRole === 'Customer'" :to="'/shopping-cart'"><button class="btn-search btn btn-primary btn-md-square ms-4 me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-shopping-cart"></i></button></RouterLink>
-                        <button @click="signOut()" class="btn-search btn btn-primary btn-md-square ms-4 me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-download"></i></button>
                     </div>
                 </nav>
             </div>
@@ -63,3 +74,12 @@
   <RouterView />
 </template>
 
+<style>
+  .nav-link .fas.fa-user {
+    display: inline-block !important; /* Ensure the icon is always displayed */
+  }
+
+  .dropdown-toggle::after {
+    display: none; /* Optionally, hide the dropdown indicator arrow */
+  }
+</style>

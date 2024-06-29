@@ -102,7 +102,11 @@
                     emit('buyEvent', props.chocolate.id); 
                 }
         }).catch(error => {
-            console.error('Failed to add chocolate to cart: ',error.response.status);
+            if (error.response.status === 400) {
+                alert(error.response.data)
+            }else{
+                console.error('Failed to add chocolate to cart: ',error.response.status);
+            }
         });
     }
 

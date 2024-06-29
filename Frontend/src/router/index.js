@@ -6,6 +6,8 @@ import AddChocholate from '../components/AddChocholate.vue'
 import FactoryView from '../views/FactoryView.vue'
 import AddFactory from '@/components/AddFactory.vue'
 import ShoppingCart from '../components/ShoppingCart.vue'
+import Profile from '../components/Profile.vue'
+import Orders from '../components/Orders.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +46,16 @@ const router = createRouter({
       path: '/shopping-cart',
       name: 'shopping-cart',
       component: ShoppingCart
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile
+    },
+    {
+      path: '/orders',
+      name: 'orders',
+      component: Orders
     }
   ]
 })

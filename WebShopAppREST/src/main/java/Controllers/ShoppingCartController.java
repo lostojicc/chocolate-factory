@@ -16,11 +16,13 @@ public class ShoppingCartController {
 	private UserController userControler;
 	private ChocholateInstanceController chochoInstanceContr;
 	private ChocholateController chochoControler;
+	private OrderController orderController;
 	
-	public void setDependency(UserController userControler, ChocholateInstanceController chochoInstContr,ChocholateController chochoControler) {
+	public void setDependency(UserController userControler, ChocholateInstanceController chochoInstContr,ChocholateController chochoControler, OrderController orderContr) {
 		this.userControler = userControler;
 		this.chochoInstanceContr = chochoInstContr;
 		this.chochoControler = chochoControler;
+		this.orderController = orderContr;
 	}
 	
 	public ShoppingCartController(String context) {
@@ -67,6 +69,25 @@ public class ShoppingCartController {
 		}
 		
 		return null;
+	}
+	
+	public Boolean IsChocholateFromAnotherFactory(ChocholateInstance chochoInstance) {
+		Chocholate chocholate = chochoControler.GetById(chochoInstance.getChocholateId());
+		
+		ArrayList<ChocholateInstance> list = chochoInstanceContr.GetNotCheckedByCartId(chochoInstance.getCartId());
+		
+		if(list.isEmpty()) {
+			return false;
+		}
+		
+		ChocholateInstance firstInstance = list.get(0);
+		Chocholate firstChocholate = chochoControler.GetById(firstInstance.getChocholateId());
+		
+		if(firstChocholate.getFactoryId() != chocholate.getFactoryId()) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public Boolean AddToCart(ChocholateInstance chochoInstance) {
@@ -148,6 +169,40 @@ public class ShoppingCartController {
 		chochoControler.Update(chocholate);
 		
 		return true;
+	}
+	
+	public int CheckoutFromCart(int cartId) {
+		ShoppingCart shoppingCart = this.GetById(cartId);
+		
+		if(shoppingCart == null) {
+			return 1;
+		}
+				
+		ArrayList<ChocholateInstance> instances = chochoInstanceContr.GetNotCheckedByCartId(cartId);
+		if(instances.isEmpty()) {
+			return 2;
+		}
+		
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		for(ChocholateInstance instance: instances) {
+			ids.add(instance.getId());
+		}
+		
+		Chocholate firstChocholate = chochoControler.GetById(instances.get(0).getChocholateId());
+		
+		if(!orderController.CreateOrder(shoppingCart,ids,firstChocholate.getFactoryId())) {
+			return 3;
+		}
+		
+		for(ChocholateInstance instance: instances) {
+			instance.setCheckedOut(true);
+			chochoInstanceContr.Update(instance);
+		}
+		
+		shoppingCart.setPrice(0);
+		this.Update(shoppingCart);
+		
+		return 0;
 	}
 	
 	

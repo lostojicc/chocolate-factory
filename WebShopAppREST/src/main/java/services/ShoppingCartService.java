@@ -20,11 +20,13 @@ import javax.ws.rs.core.Response.Status;
 import Controllers.ChocholateController;
 import Controllers.ChocholateInstanceController;
 import Controllers.ControllersInjector;
+import Controllers.CustomerController;
 import Controllers.ShoppingCartController;
 import Controllers.UserController;
 import dto.ChocholateInstanceDTO;
 import models.Chocholate;
 import models.ChocholateInstance;
+import models.CustomerType;
 import models.ShoppingCart;
 import models.User;
 import models.UserRole;
@@ -63,6 +65,22 @@ public class ShoppingCartService {
 		}
 		
 		return Response.ok().entity(shoppingCart).build();
+	}
+	
+	@GET
+	@Path("/getDiscount/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetDiscountByUsername(@PathParam("username") String username) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		CustomerController customerContr = conInjector.getController(CustomerController.class); 
+		
+		CustomerType customerType = customerContr.GetByUsername(username);
+		if(customerType == null) {
+			return Response.status(Status.BAD_REQUEST).build(); 
+		}
+		
+		return Response.ok().entity(customerType).build();
 	}
 	
 	@GET
@@ -124,8 +142,12 @@ public class ShoppingCartService {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		ShoppingCartController shoppingCartContr = conInjector.getController(ShoppingCartController.class);
 		
+		if(shoppingCartContr.IsChocholateFromAnotherFactory(chochoInstance)) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Please clear cart from first factory, then try again").build();
+		}
+		
 		if(!shoppingCartContr.AddToCart(chochoInstance))
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
 		
 		return Response.ok().build();
 	}
@@ -165,4 +187,31 @@ public class ShoppingCartService {
 		
 		return Response.ok().build();
 	}
+	
+	@POST
+	@Path("/checkout")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response CheckoutFromCart(ShoppingCart cart, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		ShoppingCartController shoppingCartContr = conInjector.getController(ShoppingCartController.class);
+		
+		int returnValue = shoppingCartContr.CheckoutFromCart(cart.getId());
+		if(returnValue == 1) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Shopping cart not found!").build();
+		}
+		if(returnValue == 2) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Shopping cart is empty!").build();
+		}
+		if(returnValue == 3) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Creating an order failed").build();
+		}
+		
+		return Response.ok().build();
+	}
+	
+	
 }

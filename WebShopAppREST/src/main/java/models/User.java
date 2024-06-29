@@ -17,7 +17,7 @@ public class User implements IIdentifiable, ISerializable {
 	protected LocalDate dateOfBirth;
 	protected UserRole role;
 	protected int factoryId;
-	// protected?
+
 	
 	public User() {
 		

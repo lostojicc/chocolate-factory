@@ -28,6 +28,13 @@ public class ControllersInjector {
     private void connectControllers() {
         UserController userController = getController(UserController.class);
         ChocholateController chocholateController = getController(ChocholateController.class);
+        FactoryController factoryController = getController(FactoryController.class);
+        LocationController locationController = getController(LocationController.class);
+        AddressController addressController = getController(AddressController.class);
+        
+        locationController.setDependency(addressController);
+        factoryController.setDependency(locationController, userController);
+
         ShoppingCartController shopingCartControler = getController(ShoppingCartController.class);
         ChocholateInstanceController chochoInstanceControler = getController(ChocholateInstanceController.class);
 

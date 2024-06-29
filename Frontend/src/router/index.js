@@ -4,6 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import AddChocholate from '../components/AddChocholate.vue'
 import FactoryView from '../views/FactoryView.vue'
+import AddFactory from '@/components/AddFactory.vue'
 import ShoppingCart from '../components/ShoppingCart.vue'
 
 const router = createRouter({
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/factory/:id',
       name: 'factory',
       component: FactoryView
+    },
+    {
+      path: '/add-factory',
+      name: 'addFactory',
+      component: AddFactory
     },
     {
       path: '/shopping-cart',

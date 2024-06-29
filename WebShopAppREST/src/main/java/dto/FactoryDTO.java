@@ -1,86 +1,55 @@
-package models;
+package dto;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import serializer.ISerializable;
+import Controllers.UserController;
+import models.Address;
+import models.Factory;
+import models.Location;
+import models.OpenStatus;
+import models.User;
 
-public class Factory implements IIdentifiable, ISerializable{
+public class FactoryDTO {
 	private int id;
 	private String name;
 	private LocalTime openTime;
 	private LocalTime closeTime;
 	private OpenStatus status;
-	private int locationId;
 	private String imagePath;
 	private double rating;
+	private Location location;
+	private Address address;
+	private User manager;
 	
-	public Factory() {
+	public FactoryDTO() {
 		
 	}
 	
-	
-
-	public Factory(String name, LocalTime openTime, LocalTime closeTime, OpenStatus status, int locationId, String imagePath,
-			double rating) {
+	public FactoryDTO(int id, String name, LocalTime openTime, LocalTime closeTime, OpenStatus status, String imagePath,
+			double rating, Location location, Address address) {
 		super();
+		this.id = id;
 		this.name = name;
 		this.openTime = openTime;
 		this.closeTime = closeTime;
 		this.status = status;
-		this.locationId = locationId;
 		this.imagePath = imagePath;
 		this.rating = rating;
+		this.location = location;
+		this.address = address;
 	}
-
-	@Override
-	public String[] ToCSV() {
-		// TODO Auto-generated method stub
-		String[] values = {
-				Integer.toString(id),
-				name,
-				openTime.toString(),
-				closeTime.toString(),
-				status.toString(),
-				Integer.toString(locationId),
-				imagePath,
-				Double.toString(rating)
-		};
-		return values;
-	}
-
-	@Override
-	public void FromCSV(String[] values) {
-		// TODO Auto-generated method stub
-		this.id = Integer.parseInt(values[0]);
-		this.name = values[1];
-		this.openTime = LocalTime.parse(values[2]);
-		this.closeTime = LocalTime.parse(values[3]);
-		this.status = OpenStatus.valueOf(values[4]);
-		this.locationId = Integer.parseInt(values[5]);
-		this.imagePath = values[6];
-		this.rating = Double.parseDouble(values[7]);
-	}
-
-	
 
 	public int getId() {
 		return id;
 	}
 
-
-
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
-
 	public String getName() {
 		return name;
 	}
-
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -90,72 +59,67 @@ public class Factory implements IIdentifiable, ISerializable{
 		return openTime;
 	}
 
-
-
 	public void setOpenTime(LocalTime openTime) {
 		this.openTime = openTime;
 	}
-
-
 
 	public LocalTime getCloseTime() {
 		return closeTime;
 	}
 
-
-
 	public void setCloseTime(LocalTime closeTime) {
 		this.closeTime = closeTime;
 	}
-
-
 
 	public OpenStatus getStatus() {
 		return status;
 	}
 
-
-
 	public void setStatus(OpenStatus status) {
 		this.status = status;
 	}
-
-
 
 	public String getImagePath() {
 		return imagePath;
 	}
 
-
-
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
-
-
 
 	public double getRating() {
 		return rating;
 	}
 
-
-
 	public void setRating(double rating) {
 		this.rating = rating;
 	}
 
-
-
-	public int getLocationId() {
-		return locationId;
+	public Location getLocation() {
+		return location;
 	}
 
+	public void setLocation(Location location) {
+		this.location = location;
+	}
 
+	public Address getAddress() {
+		return address;
+	}
 
-	public void setLocationId(int locationId) {
-		this.locationId = locationId;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 	
-	
-	
+	public User getManager() {
+		return manager;
+	}
+
+	public void setManager(User manager) {
+		this.manager = manager;
+	}
+
+	public Factory toModel() {
+		return new Factory(name, openTime, closeTime, status, location.getId(), imagePath, rating);
+	}
 }

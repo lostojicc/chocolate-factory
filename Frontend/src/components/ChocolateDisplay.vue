@@ -33,7 +33,7 @@
     const props = defineProps({
         factory: {
             type: Object,
-            required: true
+            required: true,
         }
     });
 

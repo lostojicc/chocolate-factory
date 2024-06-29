@@ -2,8 +2,10 @@ package Controllers;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import dao.DAO;
+import models.Factory;
 import models.Gender;
 import models.User;
 import models.UserRole;
@@ -14,7 +16,6 @@ public class UserController{
 	private DAO UserDao;
 	
 	public void setDependency() {
-		
 	}
 	
 	public UserController(String context) {
@@ -75,5 +76,18 @@ public class UserController{
 		return true;
 	}
 	
-
+	public ArrayList<User> getFreeManagers(){
+		ArrayList<User> managers = new ArrayList<>();
+		
+		for (User user : GetAll()) {
+			if(user.getRole() == UserRole.Manager && user.getFactoryId() == 0)
+				managers.add(user);
+		}
+		
+		return managers;
+	}
+	
+	public boolean update(User user) {
+		return UserDao.Update(user);
+	}
 }

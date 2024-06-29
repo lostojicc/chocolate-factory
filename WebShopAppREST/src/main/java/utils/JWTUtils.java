@@ -39,8 +39,7 @@ public class JWTUtils {
         return jwsObject.serialize();
     }
 	
-	private static String convertAuthorizationHeader(String authorizationHeader)
-    {
+	private static String convertAuthorizationHeader(String authorizationHeader){
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) 
             return authorizationHeader.substring(7);
         return "";

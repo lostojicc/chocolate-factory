@@ -59,7 +59,7 @@
                                 </a>
                             <div class="dropdown-menu bg-light p-2" style="min-width: 100px;">
                                 <RouterLink class="dropdown-item" :to="'/profile'">Profile</RouterLink>
-                                <RouterLink v-if="userRole === 'Customer'" class="dropdown-item" :to="'/orders'">Orders</RouterLink>
+                                <RouterLink v-if="userRole === 'Customer' || userRole === 'Manager'" class="dropdown-item" :to="'/orders'">Orders</RouterLink>
                                 <a href="#" class="dropdown-item" @click="signOut()">Sign out</a>
                             </div>
                             </div>

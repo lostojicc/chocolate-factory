@@ -135,7 +135,19 @@ function load(){
 }
 
 function loadManager(){
-
+    axios.get(`http://localhost:8080/WebShopAppREST/rest/order/getForManager/${username}`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        }
+    }).then(response => {
+        if (response.status === 200) {
+            orders.value = response.data
+        }
+    }).catch(error => {
+        console.error(error.response.data + " | Error status: " + error.response.status);
+        alert('Error loading orders!')
+        router.push('/')
+    });
 }
 
 function loadCustomer(){
@@ -146,10 +158,10 @@ function loadCustomer(){
     }).then(response => {
         if (response.status === 200) {
             orders.value = response.data
-            console.log(orders.value)
         }
     }).catch(error => {
         console.error(error.response.data + " | Error status: " + error.response.status);
+        alert('Error loading orders!')
         router.push('/')
     });
 }

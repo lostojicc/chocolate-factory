@@ -39,18 +39,18 @@
 
 
             <div class="col-12 py-3 d-flex justify-content-around border-primary" style="border-style: dashed;border-width: 2px;border-left: none;border-right: none;border-bottom:none;">
-                <button v-if="userRole ==='Manager'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
-                v-on:click="ClearButton">
+                <button v-if="userRole ==='Manager' && order.state==='Processing'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
+                v-on:click="RejectClick()">
                     <i class="fas fa-times fa-lg px-2"></i>
                     Reject
                 </button>
-                <button v-if="userRole ==='Customer'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
-                v-on:click="ClearButton">
+                <button v-if="userRole ==='Customer' && order.state==='Processing'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
+                v-on:click="CancelClick()">
                     <i class="fas fa-times fa-lg px-2"></i>
                     Cancel
                 </button>
-                <button v-if="userRole ==='Manager'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
-                v-on:click="ClearButton">
+                <button v-if="userRole ==='Manager' && order.state==='Processing'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
+                v-on:click="AcceptClick()">
                     <i class="fas fa-check fa-lg px-2"></i>
                     Accept
                 </button>
@@ -119,7 +119,47 @@
         else{
             showItems.value = true
         }
+    }
 
+    async function CancelClick(){
+        try {
+            const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/order/cancelOrder', props.order, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                }});
+            emit('loadEvent', null);
+        } catch (error) {
+            console.error('Error loading chocholates:', error);
+        }
+    }
+
+    async function RejectClick(){
+        try {
+            const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/order/rejectOrder', props.order, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                }});
+            emit('loadEvent', null);
+        } catch (error) {
+            console.error('Error loading chocholates:', error);
+        }
+        
+    }
+
+    async function AcceptClick(){
+        try {
+            const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/order/acceptOrder', props.order, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                }});
+            emit('loadEvent', null);
+        } catch (error) {
+            console.error('Error loading chocholates:', error);
+        }
+        
     }
 
 </script>

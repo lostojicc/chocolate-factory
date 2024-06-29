@@ -78,6 +78,34 @@ public class OrderService {
 		return Response.status(Status.OK).entity(ordersDTO).build();
 	}
 	
+	@GET
+	@Path("/getForManager/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getManagerOrders(@PathParam("username") String username,@HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		OrderController orderController = conInjector.getController(OrderController.class);
+		UserController userController = conInjector.getController(UserController.class);
+		FactoryController facContr = conInjector.getController(FactoryController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Manager not found").build();
+		}
+		
+		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
+		/*
+		for(Order o : orderController.GetByUserId(user.getId())) {
+			Factory fac = facContr.getById(o.getFactoryId());
+			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
+		}*/
+		
+		return Response.status(Status.OK).entity(ordersDTO).build();
+	}
+	
 	@POST
 	@Path("/getChocholatesForOrder")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -105,5 +133,22 @@ public class OrderService {
 		return Response.status(Status.OK).entity(chocholates).build();
 	}
 	
+	@POST
+	@Path("/cancelOrder")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response CancelOrder(OrderDTO orderDTO, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		OrderController orderController = conInjector.getController(OrderController.class);
+		
+		if(!orderController.CancelOrder(orderDTO.getId())) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		return Response.status(Status.OK).build();
+	}
 	
 }

@@ -28,6 +28,14 @@ public class OrderController {
 		OrderDAO = new DAO<Order>(contextPath, Order.class);
 	}
 	
+	public Order GetByid(int id) {
+		return (Order) OrderDAO.GetById(id);
+	}
+	
+	public Boolean Update(Order order) {
+		return OrderDAO.Update(order);
+	}
+	
 	public Boolean CreateOrder(ShoppingCart cart, ArrayList<Integer> chocholateIds, int factoryId) {
 		try {
 			String uniqueKey = GenerateUniqueIdentification();
@@ -79,5 +87,29 @@ public class OrderController {
 		return list;
 	} 
 	
+	public ArrayList<Order> GetByFactoryId(int factoryId){
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		for(Order o : this.GetAll()) {
+			if(o.getFactoryId() == factoryId) {
+				list.add(o);
+			}
+		}
+		
+		return list;
+	} 
+	
+	public Boolean CancelOrder(int orderId) {
+		Order order = this.GetByid(orderId);
+		if(order== null)
+			return false;
+		
+		order.setState(OrderState.Cancelled);
+		
+		customerController.DecreasePointsForOrder(order);
+		
+		this.Update(order);
+		return true;
+	}
 	
 }

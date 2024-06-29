@@ -5,6 +5,7 @@ import RegisterView from '../views/RegisterView.vue'
 import AddChocholate from '../components/AddChocholate.vue'
 import FactoryView from '../views/FactoryView.vue'
 import AddFactory from '@/components/AddFactory.vue'
+import ShoppingCart from '../components/ShoppingCart.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/add-factory',
       name: 'addFactory',
       component: AddFactory
+    },
+    {
+      path: '/shopping-cart',
+      name: 'shopping-cart',
+      component: ShoppingCart
     }
   ]
 })

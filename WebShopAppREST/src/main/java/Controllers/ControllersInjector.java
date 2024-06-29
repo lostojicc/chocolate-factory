@@ -32,11 +32,15 @@ public class ControllersInjector {
         LocationController locationController = getController(LocationController.class);
         AddressController addressController = getController(AddressController.class);
         
-        
-        userController.setDependency(/*npr chocholateController*/);
-        chocholateController.setDependency();
         locationController.setDependency(addressController);
         factoryController.setDependency(locationController, userController);
+
+        ShoppingCartController shopingCartControler = getController(ShoppingCartController.class);
+        ChocholateInstanceController chochoInstanceControler = getController(ChocholateInstanceController.class);
+
+        userController.setDependency(/*npr chocholateController*/);
+        chocholateController.setDependency();
+        shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController);
     }
 
     private void initializeControllers() {
@@ -46,6 +50,8 @@ public class ControllersInjector {
         LocationController locationController = new LocationController(contextPath);
         AddressController addressController = new AddressController(contextPath);
         CommentController commentController = new CommentController(contextPath);
+        ShoppingCartController shoppingCartControler = new ShoppingCartController(contextPath);
+        ChocholateInstanceController chochoInstanceControler = new ChocholateInstanceController(contextPath);
 
         registerController(UserController.class, userController);
         registerController(ChocholateController.class, chocholateController);
@@ -53,7 +59,9 @@ public class ControllersInjector {
         registerController(LocationController.class, locationController);
         registerController(AddressController.class, addressController);
         registerController(CommentController.class, commentController);
-
+        registerController(ShoppingCartController.class, shoppingCartControler);
+        registerController(ChocholateInstanceController.class, chochoInstanceControler);
+        
         connectControllers();
     }
 }

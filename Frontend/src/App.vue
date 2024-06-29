@@ -51,9 +51,9 @@
                         </div>
                         
                         <RouterLink v-if="userRole === ''" :to="'/login'"><a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Sign In</a></RouterLink>
-                        <span v-else class="d-none d-lg-inline-flex justify-content-center align-items-center">{{ username }} | {{ userRole }}<RouterLink class="btn-search btn btn-primary ms-2 btn-md-square rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-user"></i></RouterLink></span>
-                        <button @click="signOut()" class="btn-search btn btn-primary btn-md-square ms-2 me-2 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-download"></i></button>
-
+                        <span v-else class="d-none d-lg-inline-flex justify-content-center align-items-center">{{ username }} | {{ userRole }}<RouterLink class="btn-search btn btn-primary ms-4 btn-md-square rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-user"></i></RouterLink></span>
+                        <RouterLink v-if="userRole === 'Customer'" :to="'/shopping-cart'"><button class="btn-search btn btn-primary btn-md-square ms-4 me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-shopping-cart"></i></button></RouterLink>
+                        <button @click="signOut()" class="btn-search btn btn-primary btn-md-square ms-4 me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-download"></i></button>
                     </div>
                 </nav>
             </div>

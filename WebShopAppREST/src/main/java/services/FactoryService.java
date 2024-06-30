@@ -198,6 +198,7 @@ public class FactoryService {
 		FactoryController controller = conInjector.getController(FactoryController.class);
 		
 		return Response.ok().entity(controller.getSearched(dto)).build();
+    }
 
     @POST
     @Path("/comments/acceptOrReject/{logic}")

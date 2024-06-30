@@ -90,4 +90,10 @@ public class UserController{
 	public boolean update(User user) {
 		return UserDao.Update(user);
 	}
+	
+	public int GetFactoryIdByUsername(String username) {
+		User user = this.GetByUsername(username);
+		
+		return user.getFactoryId();
+	}
 }

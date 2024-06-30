@@ -75,4 +75,5 @@ public class FactoryController {
 	public Factory getById(int id) {
 		return (Factory) factoryDao.GetById(id);
 	}
+	
 }

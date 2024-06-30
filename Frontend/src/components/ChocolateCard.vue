@@ -34,8 +34,8 @@
                 </div>
                 <div class="col d-flex">
                     <a v-if="chocolate.quantity != 0 && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
-                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
-                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
+                    <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
+                    <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
             </div>
         </div>
@@ -54,6 +54,10 @@
     const props = defineProps({
         chocolate: {
             type: Object,
+            required: true
+        },
+        editable: {
+            type: Boolean,
             required: true
         }
     });

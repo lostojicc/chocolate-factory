@@ -4,7 +4,7 @@
             <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
                 <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our Products</small>
                 <h1 class="display-5 mb-5">Best Chocolates in the World
-                    <a v-if="userRole === 'Manager'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
+                    <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
                 </h1>
             </div>
                 <AddChocholate v-if="openForm" @addEvent="handleAddEvent" :editInfo="editInfo" :factory="factory"/>
@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" :editable = "editable" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
                     </div>
                 </div>
             </div>
@@ -28,12 +28,17 @@
     import {ref, onMounted } from 'vue';
     import axios from 'axios';
 
-    const userRole = localStorage.getItem('role') || '';
+    const userRole = ref(localStorage.getItem('role') || '');
+    const username = ref(localStorage.getItem('username') || '');
 
     const props = defineProps({
         factory: {
             type: Object,
             required: true,
+        },
+        editable: {
+            type: Boolean,
+            required: true
         }
     });
 

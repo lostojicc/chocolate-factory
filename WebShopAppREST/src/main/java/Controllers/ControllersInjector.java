@@ -33,7 +33,7 @@ public class ControllersInjector {
         AddressController addressController = getController(AddressController.class);
         
         locationController.setDependency(addressController);
-        factoryController.setDependency(locationController, userController);
+        factoryController.setDependency(locationController, userController, chocholateController, addressController);
 
         ShoppingCartController shopingCartControler = getController(ShoppingCartController.class);
         ChocholateInstanceController chochoInstanceControler = getController(ChocholateInstanceController.class);

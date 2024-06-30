@@ -8,17 +8,19 @@ public class Comment implements ISerializable, IIdentifiable {
 	private int factoryId;
 	private String text;
 	private int grade;
+	private CommentState state;
 	
 	public Comment() {
 		super();
 	}
 
-	public Comment(int userId, int factoryId, String text, int grade) {
+	public Comment(int userId, int factoryId, String text, int grade, CommentState state) {
 		super();
 		this.userId = userId;
 		this.factoryId = factoryId;
 		this.text = text;
 		this.grade = grade;
+		this.state = state;
 	}
 
 	@Override
@@ -28,7 +30,8 @@ public class Comment implements ISerializable, IIdentifiable {
 			Integer.toString(userId),
 			Integer.toString(factoryId),
 			text,
-			Integer.toString(grade)
+			Integer.toString(grade),
+			state.name()
 		};
 		return values;
 	}
@@ -41,8 +44,17 @@ public class Comment implements ISerializable, IIdentifiable {
 		factoryId = Integer.parseInt(values[2]);
 		text = values[3];
 		grade = Integer.parseInt(values[4]);
+		state = CommentState.valueOf(values[5]);
 	}
 	
+	public CommentState getState() {
+		return state;
+	}
+
+	public void setState(CommentState state) {
+		this.state = state;
+	}
+
 	public int getUserId() {
 		return userId;
 	}

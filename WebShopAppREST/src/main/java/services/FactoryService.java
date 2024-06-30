@@ -130,11 +130,28 @@ public class FactoryService {
     @GET
     @Path("/comments/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getComments(@PathParam("id") int factoryId) {
+    public Response getComments(@PathParam("id") int factoryId, @HeaderParam("Authorization") String authorizationHeader) {
+    	if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager) && !JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Administrator))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    	
     	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
     	CommentController controller = conInjector.getController(CommentController.class);
     	
     	Collection<Comment> comments = controller.getByFactoryId(factoryId);
+		if(comments != null)
+			return Response.ok(comments).build();
+		else 
+			return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+    @GET
+    @Path("/comments/acceptedComments/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAcceptedComments(@PathParam("id") int factoryId) {
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	CommentController controller = conInjector.getController(CommentController.class);
+    	
+    	Collection<Comment> comments = controller.GetAcceptedByFactoryId(factoryId);
 		if(comments != null)
 			return Response.ok(comments).build();
 		else 
@@ -153,5 +170,23 @@ public class FactoryService {
 			return Response.ok(user).build();
 		else 
 			return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+    @POST
+    @Path("/comments/acceptOrReject/{logic}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response AcceptOrRejectComment(Comment comment,@PathParam("logic") int logic, @HeaderParam("Authorization") String authorizationHeader) {
+    	if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    	
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	CommentController commentController = conInjector.getController(CommentController.class);
+    	
+    	if(!commentController.AcceptOrRejectComment(comment.getId(), logic)) {
+    		return Response.status(Response.Status.BAD_REQUEST).build();
+    	}
+    	
+		return Response.ok().build();
     }
 }

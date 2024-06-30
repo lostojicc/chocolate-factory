@@ -1,7 +1,8 @@
 <template>
-    <div class="container-fluid contact py-4 wow bounceInUp" data-wow-delay="0.1s">
+    <div class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
         <div class="col-12">
                             <div class="text-center">
+                                
                                 <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Your Orders</small>
                             </div>
                         </div>

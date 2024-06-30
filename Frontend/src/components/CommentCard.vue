@@ -12,24 +12,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 ps-3">
+                    <div class="d-flex flex-column justify-content-start align-items-start mt-2 ps-3">
                         <h4 class="mb-0">{{ user.name }} {{ user.surname }}</h4>
                         <p class="mb-0">{{ user.username }}</p>
                         <h5 v-if="userRole === 'Manager' || userRole=== 'Administrator'" class="mb-0 mt-2 text-secondary">{{ comment.state }}</h5>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex-column mt-2 justify-content-between">
+                    <div class="d-flex mt-2 justify-content-between">
                         <p class="card-text fs-5">{{ comment.text }}</p>
                     </div>
                 </div>
                 <div class="col-md-2 d-flex flex-column justify-content-center align-items-end">
-                    <button v-if="userRole ==='Manager' && comment.state==='Pending'" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill fixed-size-button" 
+                    <button v-if="userRole ==='Manager' && comment.state==='Pending' && editable" type="submit" class="d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill fixed-size-button" 
                 v-on:click="AcceptClick()">
                     <i class="fas fa-check fa-lg px-2"></i>
                     Accept
                 </button>
-                <button v-if="userRole ==='Manager' && comment.state==='Pending'" type="submit" class="mt-3 d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill fixed-size-button" 
+                <button v-if="userRole ==='Manager' && comment.state==='Pending' && editable" type="submit" class="mt-3 d-flex align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill fixed-size-button" 
                 v-on:click="RejectClick()">
                     <i class="fas fa-times fa-lg px-2"></i>
                     Reject
@@ -48,6 +48,10 @@
     const props = defineProps({
         comment: {
             type: Object,
+            required: true
+        },
+        editable: {
+            type: Boolean,
             required: true
         }
     });

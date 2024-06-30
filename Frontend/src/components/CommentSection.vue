@@ -5,7 +5,7 @@
                     <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Comments</small>
                     <h1 class="display-5 mb-5">What Our Customers say!</h1>
                 </div>
-                <CommentCard v-for="comment in comments" :comment="comment" @loadEvent="loadComments()"/>
+                <CommentCard v-for="comment in comments" :comment="comment" @loadEvent="loadComments()" :editable="editable"/>
             </div>
         </div>
 </template>
@@ -19,6 +19,10 @@
     const props = defineProps({
         factory: {
             type: Object,
+            required: true
+        },
+        editable: {
+            type: Boolean,
             required: true
         }
     });

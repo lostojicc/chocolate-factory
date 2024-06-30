@@ -61,6 +61,21 @@ public class FactoryService {
 	}
 	
 	@GET
+	@Path("/getFactoryByUsername/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getFactoryByUsername(@PathParam("username") String username) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController controller = conInjector.getController(UserController.class);
+		
+		int factoryId = controller.GetFactoryIdByUsername(username);
+		if(factoryId == 0)
+			return Response.status(Response.Status.NOT_FOUND).build();	
+		
+		return Response.ok(factoryId).build();
+	}
+	
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getById(@PathParam("id") int id) {

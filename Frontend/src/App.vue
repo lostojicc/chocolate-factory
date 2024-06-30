@@ -1,12 +1,16 @@
 <script setup>
     import { RouterLink, RouterView, useRouter } from 'vue-router'
     import { ref, computed, reactive, onMounted } from 'vue';
+    import axios from 'axios';
 
     const router = useRouter();
 
-    onMounted(() => {
+    onMounted(async () => {
+        await loadFactory();
         router.push("/");
     });
+
+    const factoryId = ref(0)
 
     const userRole = ref(localStorage.getItem('role') || '');
     const username = ref(localStorage.getItem('username') || '');
@@ -16,6 +20,17 @@
         localStorage.removeItem('username');
         localStorage.removeItem('role');
         location.reload();
+    }
+
+    async function loadFactory(){
+        try {
+            if(userRole.value === 'Manager' || userRole.value === 'Worker'){
+                const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/getFactoryByUsername/${username.value}`);
+                factoryId.value = response.data
+            }
+        } catch (error) {
+            console.error('Error loading factory:', error);
+        } 
     }
 </script>
 
@@ -32,22 +47,9 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <RouterLink class="nav-item nav-link active" :to="'/'">Home</RouterLink>
-                            <!-- <RouterLink class="nav-item nav-link" :to="'/factory'">About</RouterLink>
-                            <a href="service.html" class="nav-item nav-link">Services</a>
-                            <a href="event.html" class="nav-item nav-link">Events</a>
-                            <a href="menu.html" class="nav-item nav-link">Menu</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu bg-light">
-                                    <a href="book.html" class="dropdown-item">Booking</a>
-                                    <a href="blog.html" class="dropdown-item">Our Blog</a>
-                                    <a href="team.html" class="dropdown-item">Our Team</a>
-                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                    <a href="404.html" class="dropdown-item">404 Page</a>
-                                </div>
-                            </div>
-                            <a href="contact.html" class="nav-item nav-link">Contact</a> -->
+                            <RouterLink class="nav-item nav-link active me-2" :to="'/'">Home</RouterLink>
+                            <RouterLink v-if="userRole === 'Manager' || userRole === 'Worker'" class="nav-item nav-link active" :to="{ name: 'factory', params: { id: factoryId } }">My Factory</RouterLink>
+                            <RouterLink v-if="userRole === 'Customer'" class="nav-item nav-link active" :to="'/orders'">Orders</RouterLink>
                         </div>
                         
                         <RouterLink v-if="userRole === ''" :to="'/login'"><a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Sign In</a></RouterLink>
@@ -59,7 +61,6 @@
                                 </a>
                             <div class="dropdown-menu bg-light p-2" style="min-width: 100px;">
                                 <RouterLink class="dropdown-item" :to="'/profile'">Profile</RouterLink>
-                                <RouterLink v-if="userRole === 'Customer' || userRole === 'Manager'" class="dropdown-item" :to="'/orders'">Orders</RouterLink>
                                 <a href="#" class="dropdown-item" @click="signOut()">Sign out</a>
                             </div>
                             </div>

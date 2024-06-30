@@ -1,12 +1,17 @@
 package Controllers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 import dao.DAO;
+import dto.SearchOrderParamsDTO;
 import models.ChocholateInstance;
+import models.Factory;
 import models.Order;
 import models.OrderState;
 import models.ShoppingCart;
@@ -17,10 +22,12 @@ public class OrderController {
 	
 	private ChocholateInstanceController chochoInstanceController;
 	private CustomerController customerController;
+	private FactoryController factoryController;
 	
-	public void setDependency(ChocholateInstanceController chochoInstCont, CustomerController customerContr) {
+	public void setDependency(ChocholateInstanceController chochoInstCont, CustomerController customerContr, FactoryController factoryController) {
 		this.chochoInstanceController = chochoInstCont;
 		this.customerController = customerContr;
+		this.factoryController = factoryController;
 	}
 	
 	public OrderController(String context) {
@@ -109,6 +116,94 @@ public class OrderController {
 		customerController.DecreasePointsForOrder(order);
 		
 		this.Update(order);
+		return true;
+	}
+	
+	public Boolean RejectOrAcceptOrder(int orderId, int logic) {
+		Order order = this.GetByid(orderId);
+		if(order== null)
+			return false;
+		
+		if(logic == 0)
+			order.setState(OrderState.Rejected);
+		if(logic == 1)
+			order.setState(OrderState.Accepted);
+		
+		return this.Update(order);
+	}
+	
+	public ArrayList<Order> SearchByUserId(int userId, SearchOrderParamsDTO searchParams){
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		for(Order o : this.GetAll()) {
+			if(o.getUserId() == userId && CheckSearchParams(o, searchParams)) {
+				list.add(o);
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Order> SearchByFactoryId(int factoryId, SearchOrderParamsDTO searchParams){
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		for(Order o : this.GetAll()) {
+			if(o.getFactoryId() == factoryId && CheckSearchParams(o, searchParams)) {
+				list.add(o);
+			}
+		}
+		
+		return list;
+	}
+	
+	public Boolean CheckSearchParams(Order o, SearchOrderParamsDTO searchParams) {
+		Factory factory = factoryController.getById(o.getFactoryId());
+		
+		if(!searchParams.getFactoryName().isEmpty()) {
+			String facName = factory.getName().toUpperCase();
+			String search = searchParams.getFactoryName().toUpperCase();
+			if(!facName.contains(search))
+				return false;
+		}
+		
+		if(!searchParams.getMinPrice().isEmpty()) {
+			double minPrice = Double.parseDouble(searchParams.getMinPrice());
+			if(o.getPrice() < minPrice) {
+				return false;
+			}
+		}
+		
+		if(!searchParams.getMaxPrice().isEmpty()) {
+			double maxPrice = Double.parseDouble(searchParams.getMaxPrice());
+			if(o.getPrice() > maxPrice) {
+				return false;
+			}
+		}
+		
+		if(!searchParams.getMinDate().isEmpty()) {
+	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            Date minDate = formatter.parse(searchParams.getMinDate());
+	            if(o.getDateTime().before(minDate)) {
+	            	return false;
+	            }
+			} catch (Exception e) {
+            e.printStackTrace();
+			}
+		}
+		
+		if(!searchParams.getMaxDate().isEmpty()) {
+	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            Date maxDate = formatter.parse(searchParams.getMaxDate());
+	            if(o.getDateTime().after(maxDate)) {
+	            	return false;
+	            }
+			} catch (Exception e) {
+            e.printStackTrace();
+			}
+		}
+		
 		return true;
 	}
 	

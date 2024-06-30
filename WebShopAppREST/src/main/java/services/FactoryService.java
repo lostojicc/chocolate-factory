@@ -27,6 +27,7 @@ import Controllers.FactoryController;
 import Controllers.LocationController;
 import Controllers.UserController;
 import dto.FactoryDTO;
+import dto.FactorySearchDTO;
 import models.Address;
 import models.Chocholate;
 import models.Comment;
@@ -153,5 +154,16 @@ public class FactoryService {
 			return Response.ok(user).build();
 		else 
 			return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSearched(FactorySearchDTO dto) {
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		FactoryController controller = conInjector.getController(FactoryController.class);
+		
+		return Response.ok().entity(controller.getSearched(dto)).build();
     }
 }

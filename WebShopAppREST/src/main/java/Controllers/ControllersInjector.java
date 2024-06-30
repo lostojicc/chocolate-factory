@@ -44,7 +44,7 @@ public class ControllersInjector {
         chocholateController.setDependency();
         shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController,orderController);
         customerController.setDependency(userController);
-        orderController.setDependency(chochoInstanceControler, customerController);
+        orderController.setDependency(chochoInstanceControler, customerController, factoryController);
     }
 
     private void initializeControllers() {

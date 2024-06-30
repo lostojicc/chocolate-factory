@@ -55,6 +55,14 @@
                     Accept
                 </button>
             </div>
+            <div v-if="showRejection === true && userRole ==='Manager' && order.state==='Processing'" class="col-12 py-2 d-flex justify-content-center align-items-center">
+                <input type="text" class="form-control border-primary p-2 w-50" placeholder="Enter Rejection Reason" v-model="rejectionReason"/>
+                <button type="submit" class="d-flex mx-2 align-items-center justify-content-start btn btn-primary py-3 px-4 rounded-pill" 
+                v-on:click="SendRejection()">
+                    <i class="fas fa-times fa-lg px-2"></i>
+                    Reject
+                </button>
+            </div>
           </div>
         </div>
       </div>
@@ -62,13 +70,15 @@
 </template>  
 
 <script setup>
-    import { defineProps, defineEmits, ref, onMounted } from 'vue';
+    import { defineProps, defineEmits, ref, onMounted, onUpdated } from 'vue';
     import axios from 'axios';
 
     const userRole = localStorage.getItem('role') || '';
     const username = localStorage.getItem('username') || '';
     const emit = defineEmits(['loadEvent']);
     //emit('loadEvent', props.chocolate.id); 
+    const rejectionReason = ref('')
+    const showRejection = ref(false)
 
     const props = defineProps({
         order: {
@@ -81,6 +91,10 @@
     const showItems = ref(false)
 
     onMounted(async () => {
+        await loadChocholates();
+    });
+
+    onUpdated(async () => {
         await loadChocholates();
     });
 
@@ -134,23 +148,28 @@
         }
     }
 
-    async function RejectClick(){
-        try {
-            const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/order/rejectOrder', props.order, 
-            {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-                }});
-            emit('loadEvent', null);
-        } catch (error) {
-            console.error('Error loading chocholates:', error);
+    
+
+    function RejectClick(){
+        if(showRejection.value){
+            showRejection.value = false
         }
-        
+        else{
+            showRejection.value = true
+        }
     }
 
-    async function AcceptClick(){
+    function AcceptClick(){
+        SendRequest(1)
+    }
+
+    function SendRejection(){
+        SendRequest(0)
+    }
+
+    async function SendRequest(logic){
         try {
-            const response = await axios.post('http://localhost:8080/WebShopAppREST/rest/order/acceptOrder', props.order, 
+            const response = await axios.post(`http://localhost:8080/WebShopAppREST/rest/order/rejectOrAcceptOrder/${logic}`, props.order, 
             {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
@@ -158,8 +177,7 @@
             emit('loadEvent', null);
         } catch (error) {
             console.error('Error loading chocholates:', error);
-        }
-        
+        }  
     }
 
 </script>

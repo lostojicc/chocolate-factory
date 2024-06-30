@@ -25,6 +25,7 @@ import Controllers.OrderController;
 import Controllers.UserController;
 import dto.ChocholateInstanceDTO;
 import dto.OrderDTO;
+import dto.SearchOrderParamsDTO;
 import models.Chocholate;
 import models.ChocholateInstance;
 import models.Factory;
@@ -77,12 +78,71 @@ public class OrderService {
 		
 		return Response.status(Status.OK).entity(ordersDTO).build();
 	}
+
+	@POST
+	@Path("/searchForUser/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response SearchUserOrders(@PathParam("username") String username, SearchOrderParamsDTO searchParams,@HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		OrderController orderController = conInjector.getController(OrderController.class);
+		UserController userController = conInjector.getController(UserController.class);
+		FactoryController facContr = conInjector.getController(FactoryController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("User not found").build();
+		}
+		
+		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
+		
+		for(Order o : orderController.SearchByUserId(user.getId(), searchParams)) {
+			Factory fac = facContr.getById(o.getFactoryId());
+			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
+		}
+		
+		return Response.status(Status.OK).entity(ordersDTO).build();
+	}
+	
+	@POST
+	@Path("/searchForManager/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response SearchManagerOrders(@PathParam("username") String username, SearchOrderParamsDTO searchParams,@HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		OrderController orderController = conInjector.getController(OrderController.class);
+		UserController userController = conInjector.getController(UserController.class);
+		FactoryController facContr = conInjector.getController(FactoryController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("User not found").build();
+		}
+		
+		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
+		
+		for(Order o : orderController.SearchByFactoryId(user.getFactoryId(),searchParams)) {
+			Factory fac = facContr.getById(o.getFactoryId());
+			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
+		}
+		
+		return Response.status(Status.OK).entity(ordersDTO).build();
+	}
+	
+	
+	
 	
 	@GET
 	@Path("/getForManager/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getManagerOrders(@PathParam("username") String username,@HeaderParam("Authorization") String authorizationHeader) {
-		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
@@ -97,11 +157,11 @@ public class OrderService {
 		}
 		
 		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
-		/*
-		for(Order o : orderController.GetByUserId(user.getId())) {
+	
+		for(Order o : orderController.GetByFactoryId(user.getFactoryId())) {
 			Factory fac = facContr.getById(o.getFactoryId());
 			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
-		}*/
+		}
 		
 		return Response.status(Status.OK).entity(ordersDTO).build();
 	}
@@ -111,8 +171,17 @@ public class OrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getChocholatesForOrder(OrderDTO orderDTO,@HeaderParam("Authorization") String authorizationHeader) {
-		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+		Boolean logic = false;
+		if(JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			logic = true;
+			
+		
+		if(JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			logic = true;
+		
+		if(!logic) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
+		}
 		
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		OrderController orderController = conInjector.getController(OrderController.class);
@@ -145,6 +214,24 @@ public class OrderService {
 		OrderController orderController = conInjector.getController(OrderController.class);
 		
 		if(!orderController.CancelOrder(orderDTO.getId())) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		return Response.status(Status.OK).build();
+	}
+	
+	@POST
+	@Path("/rejectOrAcceptOrder/{logic}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response RejectOrder(OrderDTO orderDTO, @PathParam("logic") int logic,@HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		OrderController orderController = conInjector.getController(OrderController.class);
+		
+		if(!orderController.RejectOrAcceptOrder(orderDTO.getId(), logic)) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		

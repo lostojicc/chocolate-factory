@@ -94,6 +94,20 @@ public class OrderController {
 		return list;
 	} 
 	
+	public ArrayList<Order> GetAcceptedByUserAndFactoryId(int userId, int factoryId){
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		for(Order o : this.GetAll()) {
+			if(o.getUserId() == userId && o.getFactoryId() == factoryId && o.getState() == OrderState.Accepted) {
+				list.add(o);
+			}
+		}
+		
+		return list;
+	} 
+	
+	
+	
 	public ArrayList<Order> GetByFactoryId(int factoryId){
 		ArrayList<Order> list = new ArrayList<Order>();
 		

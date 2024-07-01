@@ -25,6 +25,7 @@ import Controllers.CommentController;
 import Controllers.ControllersInjector;
 import Controllers.FactoryController;
 import Controllers.LocationController;
+import Controllers.OrderController;
 import Controllers.UserController;
 import dto.FactoryDTO;
 import dto.FactorySearchDTO;
@@ -175,6 +176,29 @@ public class FactoryService {
     }
     
     @GET
+    @Path("/comments/canUserComment/{username}/{factoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response CanUserComment(@PathParam("username") String username,@PathParam("factoryId") int factoryId,@HeaderParam("Authorization") String authorizationHeader) {
+    	if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    	
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	CommentController commentController = conInjector.getController(CommentController.class);
+    	OrderController orderController = conInjector.getController(OrderController.class);
+    	UserController controller = conInjector.getController(UserController.class);
+    	
+    	User user = controller.GetByUsername(username);
+    	
+    	int numOfComments = commentController.GetNumberOfCommentsOnFactory(user.getId(), factoryId);
+    	int numOfOrders = orderController.GetAcceptedByUserAndFactoryId(user.getId(), factoryId).size();
+    	
+		if(numOfOrders > numOfComments)
+			return Response.ok().build();
+		else 
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    
+    @GET
     @Path("/comments/user/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") int userId) {
@@ -218,4 +242,27 @@ public class FactoryService {
 		return Response.ok().build();
 
     }
+    
+    @POST
+    @Path("/comments/addComment/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response AcceptOrRejectComment(Comment comment,@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
+    	if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    	
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");   	
+    	CommentController commentController = conInjector.getController(CommentController.class);
+    	UserController controller = conInjector.getController(UserController.class);
+    	
+    	User user = controller.GetByUsername(username);
+    	comment.setUserId(user.getId());
+    	
+    	commentController.Save(comment);
+    	
+		return Response.ok().build();
+
+    }
+    
+    
 }

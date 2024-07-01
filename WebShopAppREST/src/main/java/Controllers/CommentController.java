@@ -21,6 +21,10 @@ public class CommentController {
 		return commentDao.GetAll();
 	}
 	
+	public void Save(Comment comment){
+		commentDao.Save(comment);
+	}
+	
 	public Collection<Comment> getByFactoryId(int id){
 		Collection<Comment> comments = new ArrayList<Comment>();
 		
@@ -73,6 +77,21 @@ public class CommentController {
 		}
 		
 		return this.Update(comment);
+	}
+	
+	public ArrayList<Comment> GetByUserIdAndFactoryId(int userId, int factoryId){
+		ArrayList<Comment> comments = new ArrayList<Comment>();
+		
+		for (Comment comment : getAll()) {
+			if (comment.getUserId() == userId && comment.getFactoryId() == factoryId) 
+				comments.add(comment);
+		}
+		
+		return comments;
+	}
+	
+	public int GetNumberOfCommentsOnFactory(int userId, int factoryId) {
+		return this.GetByUserIdAndFactoryId(userId,factoryId).size();
 	}
 	
 }

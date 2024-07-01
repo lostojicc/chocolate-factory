@@ -119,17 +119,18 @@ public class OrderService {
 		UserController userController = conInjector.getController(UserController.class);
 		FactoryController facContr = conInjector.getController(FactoryController.class);
 		
-		User user = userController.GetByUsername(username);
+		User manager = userController.GetByUsername(username);
 		
-		if(user == null) {
+		if(manager == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("User not found").build();
 		}
 		
 		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
 		
-		for(Order o : orderController.SearchByFactoryId(user.getFactoryId(),searchParams)) {
+		for(Order o : orderController.SearchByFactoryId(manager.getFactoryId(),searchParams)) {
 			Factory fac = facContr.getById(o.getFactoryId());
-			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
+			User customer = userController.getById(o.getUserId());
+			ordersDTO.add(new OrderDTO(o, fac.getName() ,customer));
 		}
 		
 		return Response.status(Status.OK).entity(ordersDTO).build();
@@ -150,17 +151,18 @@ public class OrderService {
 		UserController userController = conInjector.getController(UserController.class);
 		FactoryController facContr = conInjector.getController(FactoryController.class);
 		
-		User user = userController.GetByUsername(username);
+		User manager = userController.GetByUsername(username);
 		
-		if(user == null) {
+		if(manager == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Manager not found").build();
 		}
 		
 		ArrayList<OrderDTO> ordersDTO = new ArrayList<OrderDTO>();
-	
-		for(Order o : orderController.GetByFactoryId(user.getFactoryId())) {
+		
+		for(Order o : orderController.GetByFactoryId(manager.getFactoryId())) {
 			Factory fac = facContr.getById(o.getFactoryId());
-			ordersDTO.add(new OrderDTO(o, fac.getName() ,user));
+			User customer = userController.getById(o.getUserId());
+			ordersDTO.add(new OrderDTO(o, fac.getName() ,customer));
 		}
 		
 		return Response.status(Status.OK).entity(ordersDTO).build();

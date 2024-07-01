@@ -9,16 +9,16 @@ public class FactorySearchDTO {
 	private String chocolate;
 	private String location;
 	private double rating;
-	private ChocholateKind chocolateKind;
-	private ChocholateType chocolateType;
-	private OpenStatus status;
+	private String chocolateKind;
+	private String chocolateType;
+	private String status;
 	
 	public FactorySearchDTO() {
 		
 	}
 	
-	public FactorySearchDTO(String name, String chocolate, String location, double rating, ChocholateKind chocolateKind,
-			ChocholateType chocolateType, OpenStatus status) {
+	public FactorySearchDTO(String name, String chocolate, String location, double rating, String chocolateKind,
+			String chocolateType, String status) {
 		super();
 		this.name = name;
 		this.chocolate = chocolate;
@@ -53,22 +53,22 @@ public class FactorySearchDTO {
 	public void setRating(double rating) {
 		this.rating = rating;
 	}
-	public ChocholateKind getChocolateKind() {
+	public String getChocolateKind() {
 		return chocolateKind;
 	}
-	public void setChocolateKind(ChocholateKind chocolateKind) {
+	public void setChocolateKind(String chocolateKind) {
 		this.chocolateKind = chocolateKind;
 	}
-	public ChocholateType getChocolateType() {
+	public String getChocolateType() {
 		return chocolateType;
 	}
-	public void setChocolateType(ChocholateType chocolateType) {
+	public void setChocolateType(String chocolateType) {
 		this.chocolateType = chocolateType;
 	}
-	public OpenStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(OpenStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	

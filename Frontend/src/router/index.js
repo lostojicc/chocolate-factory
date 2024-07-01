@@ -8,6 +8,7 @@ import AddFactory from '@/components/AddFactory.vue'
 import ShoppingCart from '../components/ShoppingCart.vue'
 import Profile from '../components/Profile.vue'
 import Orders from '../components/Orders.vue'
+import FactorySearchView from '../views/FactorySearchView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,12 @@ const router = createRouter({
       path: '/orders',
       name: 'orders',
       component: Orders
+    },
+    {
+      path: '/factory-search',
+      name: 'factory-search',
+      component: FactorySearchView,
+      props: route => ({ search: route.query.search })
     }
   ]
 })

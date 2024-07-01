@@ -9,6 +9,8 @@ import dto.FactoryDTO;
 import dto.FactorySearchDTO;
 import models.Address;
 import models.Chocholate;
+import models.ChocholateKind;
+import models.ChocholateType;
 import models.Factory;
 import models.Location;
 import models.OpenStatus;
@@ -82,11 +84,11 @@ public class FactoryController {
 	private boolean matchesChocolate(Factory factory, FactorySearchDTO search) {
 		ArrayList<Chocholate> chocolates = chocholateController.getByFactoryId(factory.getId());
 
-		if(chocolates.isEmpty() && search.getChocolate().isBlank())
+		if(chocolates.isEmpty() || search.getChocolate().isBlank())
 			return true;
 		
 		for (Chocholate chocholate : chocolates) {
-			if(chocholate.getName().contains(search.getChocolate()) || search.getChocolate().isBlank())
+			if(chocholate.getName().toLowerCase().contains(search.getChocolate().toLowerCase()))
 				return true;
 		}
 		
@@ -97,30 +99,77 @@ public class FactoryController {
 		Location location = locationController.getById(factory.getLocationId());
 		Address address = addressController.getById(location.getAddressId());
 		
-		return address.getCity().contains(search.getLocation()) || address.getState().contains(search.getLocation()) || search.getLocation().isBlank();
+		return address.getCity().toLowerCase().contains(search.getLocation().toLowerCase()) || address.getState().toLowerCase().contains(search.getLocation().toLowerCase()) || search.getLocation().isBlank();
 	}
 	
 	private boolean matchesName(Factory factory, FactorySearchDTO search) {
-		return factory.getName().contains(search.getName()) || search.getName().isBlank();
+		return factory.getName().toLowerCase().contains(search.getName().toLowerCase()) || search.getName().isBlank();
 	}
 	
 	private boolean matchesRating(Factory factory, FactorySearchDTO search) {
 		return factory.getRating() >= search.getRating();
 	}
 	
+	private boolean matchesChocolateKind(Factory factory, FactorySearchDTO search) {
+		ArrayList<Chocholate> chocolates = chocholateController.getByFactoryId(factory.getId());
+		
+		if(search.getChocolateKind().isBlank())
+			return true;
+
+		if(chocolates.isEmpty())
+			return false;
+		
+		for (Chocholate chocholate : chocolates) {
+			if(chocholate.getKind() == ChocholateKind.valueOf(search.getChocolateKind()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean matchesChocolateType(Factory factory, FactorySearchDTO search) {
+		ArrayList<Chocholate> chocolates = chocholateController.getByFactoryId(factory.getId());
+		
+		if(search.getChocolateType().isBlank())
+			return true;
+
+		if(chocolates.isEmpty())
+			return false;
+		
+		for (Chocholate chocholate : chocolates) {
+			if(chocholate.getType() == ChocholateType.valueOf(search.getChocolateType()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean matchesStatus(Factory factory, FactorySearchDTO search) {
+		if(search.getStatus().isBlank())
+			return true;
+		
+		return factory.getStatus() == OpenStatus.valueOf(search.getStatus());
+	}
+	
 	private boolean matchesSearch(Factory factory, FactorySearchDTO search) {
 		return matchesName(factory, search) &&
 				matchesChocolate(factory, search) &&
 				matchesLocation(factory, search) &&
-				matchesRating(factory, search);
+				matchesRating(factory, search) &&
+				matchesChocolateKind(factory, search) &&
+				matchesChocolateType(factory, search) &&
+				matchesStatus(factory, search);
 	}
 	
-	public Collection<Factory> getSearched(FactorySearchDTO search){
-		Collection<Factory> factories = new ArrayList<Factory>();
+	public Collection<FactoryDTO> getSearched(FactorySearchDTO search){
+		Collection<FactoryDTO> factories = new ArrayList<FactoryDTO>();
 		
 		for (Factory factory : getAll()) {
-			if(matchesSearch(factory, search))
-				factories.add(factory);
+			if(matchesSearch(factory, search)) {
+				Location location = locationController.getById(factory.getLocationId());
+				factories.add(new FactoryDTO(factory, location, addressController.getById(location.getAddressId())));
+			}
+				
 		}
 		
 		return factories;

@@ -38,6 +38,18 @@ public class FactoryDTO {
 		this.location = location;
 		this.address = address;
 	}
+	
+	public FactoryDTO(Factory factory, Location location, Address address) {
+		this.id = factory.getId();
+		this.name = factory.getName();
+		this.openTime = factory.getOpenTime();
+		this.closeTime = factory.getCloseTime();
+		this.status = factory.getStatus();
+		this.imagePath = factory.getImagePath();
+		this.rating = factory.getRating();
+		this.location = location;
+		this.address = address;
+	}
 
 	public int getId() {
 		return id;

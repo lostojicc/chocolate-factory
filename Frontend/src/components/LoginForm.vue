@@ -77,7 +77,7 @@
 
     function signIn(event){
         event.preventDefault();
-
+        console.log(user.value);
         axios.post("http://localhost:8080/WebShopAppREST/rest/login", user.value).then(response => {
             let token = response.data;
             let decodedToken = decodeToken(token);

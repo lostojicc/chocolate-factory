@@ -189,9 +189,10 @@ public class FactoryService {
     }
     
 
-    @GET
+    @POST
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response getSearched(FactorySearchDTO dto) {
     	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		

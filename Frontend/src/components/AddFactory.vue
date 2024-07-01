@@ -147,7 +147,7 @@ import RegisterForm from './RegisterForm.vue';
     }
 
     function saveFactory(){
-        console.log(factory.value);
+        console.log(factory);
         axios.post('http://localhost:8080/WebShopAppREST/rest/factory/add', factory.value, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header

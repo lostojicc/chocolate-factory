@@ -48,6 +48,7 @@
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
                             <RouterLink class="nav-item nav-link active me-2" :to="'/'">Home</RouterLink>
+                            <RouterLink v-if="userRole === 'Administrator'" class="nav-item nav-link active" :to="'/admin'">All Users</RouterLink>
                             <RouterLink v-if="userRole === 'Manager' || userRole === 'Worker'" class="nav-item nav-link active" :to="{ name: 'factory', params: { id: factoryId } }">My Factory</RouterLink>
                             <RouterLink v-if="userRole === 'Customer'" class="nav-item nav-link active" :to="'/orders'">Orders</RouterLink>
                         </div>

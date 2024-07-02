@@ -40,7 +40,7 @@ public class ControllersInjector {
         OrderController orderController = getController(OrderController.class);
         CustomerController customerController = getController(CustomerController.class);
 
-        userController.setDependency(/*npr chocholateController*/);
+        userController.setDependency(customerController);
         chocholateController.setDependency();
         shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController,orderController);
         customerController.setDependency(userController);

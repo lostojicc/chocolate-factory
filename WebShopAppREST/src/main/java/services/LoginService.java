@@ -55,6 +55,9 @@ public class LoginService {
 		if(!usCo.IsPasswordCorrect(loggedUser, user.getPassword()))
 			return Response.status(Response.Status.UNAUTHORIZED).entity("Incorrect password!").build();
 		
+		if(loggedUser.isBlocked())
+			return Response.status(Response.Status.UNAUTHORIZED).entity("This account has been blocked.").build();
+		
 		try {
             String token = JWTUtils.generateToken(loggedUser.getUsername(), loggedUser.getRole());
             

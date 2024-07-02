@@ -111,7 +111,8 @@ const user = ref({
     gender: 'Male',
     dateOfBirth: '',
     role: 'Customer',
-    factoryId: 0
+    factoryId: 0,
+    isBlocked: false
 })
 
 const repeatedPassword = ref('')
@@ -176,6 +177,8 @@ function Register(event){
             emit('registeredManagerEvent', user)
             return;
         }
+
+        user.value.isSuspicious = false;
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/register', user.value)
             .then( response => {
                 if (response.status === 200) {

@@ -5,12 +5,16 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+
+import utils.DateUtils;
 
 import dao.DAO;
 import dto.SearchOrderParamsDTO;
 import models.ChocholateInstance;
+import models.Customer;
 import models.Factory;
 import models.Order;
 import models.OrderState;
@@ -94,6 +98,17 @@ public class OrderController {
 		return list;
 	} 
 	
+	public ArrayList<Order> getCancelledByUserId(int id){
+		ArrayList<Order> orders = new ArrayList<Order>();
+		
+		for (Order order : GetByUserId(id)) {
+			if(order.getState() == OrderState.Cancelled)
+				orders.add(order);
+		}
+		
+		return orders;
+	}
+	
 	public ArrayList<Order> GetAcceptedByUserAndFactoryId(int userId, int factoryId){
 		ArrayList<Order> list = new ArrayList<Order>();
 		
@@ -118,7 +133,26 @@ public class OrderController {
 		}
 		
 		return list;
-	} 
+	}
+	
+	private int countCancelledOrdersWithinMonth(Order currentOrder) {
+		int counter = 1;
+		
+		for (Order order : getCancelledByUserId(currentOrder.getUserId())) {
+			if(DateUtils.isWithinMonth(order.getDateTime(), currentOrder.getDateTime()))
+				counter++;
+		}
+		
+		return counter;
+	}
+	
+	private void markSuspicious(int cancelCounter, int customerId) {
+		if(cancelCounter >= 5) {
+			Customer customer = customerController.GetByUserId(customerId);
+			customer.setSuspicious(true);
+			customerController.Update(customer);
+		}
+	}
 	
 	public Boolean CancelOrder(int orderId) {
 		Order order = this.GetByid(orderId);
@@ -127,6 +161,8 @@ public class OrderController {
 		
 		order.setState(OrderState.Cancelled);
 		
+		markSuspicious(countCancelledOrdersWithinMonth(order), order.getUserId());
+
 		customerController.DecreasePointsForOrder(order);
 		
 		this.Update(order);

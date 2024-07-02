@@ -4,6 +4,7 @@ import java.nio.file.attribute.UserPrincipalLookupService;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import Controllers.ShoppingCartController;
 import Controllers.UserController;
 import dao.DAO;
 import dto.CustomerDTO;
+import dto.UserSearchDTO;
 import models.Chocholate;
 import models.Customer;
 import models.CustomerTypeName;
@@ -49,6 +51,19 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("controllers", new ControllersInjector(contextPath));
 		}
+	}
+	
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSearched(UserSearchDTO search) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		Collection<User> users = userCont.getSearched(search);
+		
+		return Response.ok().entity(users).build();
 	}
 	
 	@GET
@@ -141,6 +156,8 @@ public class UserService {
 		return Response.ok().entity(customerDTO).build();
 	}
 	
+	
+	
 	@POST
 	@Path("/updateName/{data}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -186,6 +203,20 @@ public class UserService {
         return Response.ok(message).build();
 	}
 	
-	
-	
+	@POST
+	@Path("/block/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response blockUser(@HeaderParam("Authorization") String authorizationHeader, @PathParam("id") int id) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Administrator))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		if(userCont.blockUser(id))		
+			return Response.ok().build();
+		
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
 }

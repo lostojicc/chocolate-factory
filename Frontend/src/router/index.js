@@ -9,6 +9,7 @@ import ShoppingCart from '../components/ShoppingCart.vue'
 import Profile from '../components/Profile.vue'
 import Orders from '../components/Orders.vue'
 import FactorySearchView from '../views/FactorySearchView.vue';
+import AdminView from '@/views/AdminView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,11 @@ const router = createRouter({
       name: 'factory-search',
       component: FactorySearchView,
       props: route => ({ search: route.query.search })
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView
     }
   ]
 })

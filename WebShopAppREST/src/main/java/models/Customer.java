@@ -12,6 +12,7 @@ public class Customer implements IIdentifiable, ISerializable{
 	private int userId;
 	private int points;
 	private int customerTypeId;
+	private boolean isSuspicious;
 	
 	public Customer() {
 		
@@ -23,7 +24,8 @@ public class Customer implements IIdentifiable, ISerializable{
 				Integer.toString(id),
 				Integer.toString(userId),
 				Integer.toString(points),
-				Integer.toString(customerTypeId)
+				Integer.toString(customerTypeId),
+				Boolean.toString(isSuspicious)
 		};
 		return values;
 	}
@@ -34,6 +36,7 @@ public class Customer implements IIdentifiable, ISerializable{
 		this.userId = Integer.parseInt(values[1]);
 		this.points = Integer.parseInt(values[2]);
 		this.customerTypeId = Integer.parseInt(values[3]);
+		this.isSuspicious = Boolean.parseBoolean(values[4]);
 	}
 	
 	public int getUserId() {
@@ -69,4 +72,14 @@ public class Customer implements IIdentifiable, ISerializable{
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public boolean isSuspicious() {
+		return isSuspicious;
+	}
+
+	public void setSuspicious(boolean isSuspicious) {
+		this.isSuspicious = isSuspicious;
+	}
+	
+	
 }

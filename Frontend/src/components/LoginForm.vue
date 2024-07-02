@@ -1,5 +1,18 @@
 <template>
     <div class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
+        <div v-if="errorMessage != ''" class="container border border-primary bg-light align-items-center mb-3">
+            <div class="row">
+                <div class="col-1 d-flex align-items-center">
+                    <i class="fas fa-info-circle" style="color: red;"></i>
+                </div>
+                <div class="col-10 d-flex justify-content-center align-items-center text-center">
+                    <p class="my-3">{{ errorMessage }}</p>
+                </div>
+                <div class="col-1 d-flex align-items-center">
+                    <button @click="dismissError" class="btn"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+        </div>
             <div class="container">
                 <div class="row g-0">
                     <div class="col-1">
@@ -63,6 +76,7 @@
     const invalidUsername = ref("");
     const invalidPassword = ref("");
     
+    const errorMessage = ref('');
 
     const user = ref({
         username : '',
@@ -73,6 +87,10 @@
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         return JSON.parse(atob(base64));
+    }
+
+    function dismissError(){
+        errorMessage.value = '';
     }
 
     function signIn(event){
@@ -90,6 +108,7 @@
             localStorage.setItem('role', role);
             location.reload();
         }).catch(error => {
+            errorMessage.value = error.response.data;
             console.log(error.response.data)
         });
     }

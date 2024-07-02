@@ -17,7 +17,7 @@ public class User implements IIdentifiable, ISerializable {
 	protected LocalDate dateOfBirth;
 	protected UserRole role;
 	protected int factoryId;
-
+	protected boolean isBlocked;
 	
 	public User() {
 		
@@ -47,7 +47,8 @@ public class User implements IIdentifiable, ISerializable {
 				gender.name(),
 				dateOfBirth.toString(),
 				role.name(),
-				Integer.toString(factoryId)
+				Integer.toString(factoryId),
+				Boolean.toString(isBlocked)
 		};
 		return values;
 	}
@@ -63,6 +64,7 @@ public class User implements IIdentifiable, ISerializable {
 		this.dateOfBirth = LocalDate.parse(values[6]);
 		this.role = UserRole.valueOf(values[7]);
 		this.factoryId = Integer.parseInt(values[8]);
+		this.isBlocked = Boolean.parseBoolean(values[9]);
 	}
 
 	public int getId() {
@@ -135,6 +137,14 @@ public class User implements IIdentifiable, ISerializable {
 
 	public void setFactoryId(int factoryId) {
 		this.factoryId = factoryId;
+	}
+
+	public boolean isBlocked() {
+		return isBlocked;
+	}
+
+	public void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
 	}
 	
 	

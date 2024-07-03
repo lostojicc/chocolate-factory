@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" :editable = "editable" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" :editable = "editable" @editEvent="handleEditEvent" @editQuantityEvent="handleQuantityEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
                     </div>
                 </div>
             </div>
@@ -67,6 +67,19 @@
     onMounted(async () => {
         await loadChocolates();
     });
+
+    function handleQuantityEvent(data){
+        axios.post(`http://localhost:8080/WebShopAppREST/rest/chocholate/updateQuantity?chocolateId=${data.chocolateId}&quantity=${data.quantity}`, {}, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }).then(response => {
+            console.log("Success: ", response.data);  
+            loadChocolates();
+        }).catch(error => {
+            console.error("Error updating quantity: ", error.response.data);
+        });
+    }
 
     function handleDeleteConfirmationEvent(chocolateId){
         axios.delete(`http://localhost:8080/WebShopAppREST/rest/chocholate/delete/${chocolateId}`).then(response => {

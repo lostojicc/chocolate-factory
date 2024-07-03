@@ -35,6 +35,7 @@
             <ChocolateDisplay v-show="showTab === 'Chocolates'" :factory="factory" :editable="editable"/>
             <CommentSection v-show="showTab === 'Comments'" :factory="factory" :editable="editable"/>
             <Orders v-show="showTab === 'Orders'"/>
+            <Workers v-show="showTab === 'Workers'" :factory="factory"/>
         </div>
         
     </div>   
@@ -45,6 +46,7 @@ import FactoryInformation from '@/components/FactoryInformation.vue';
 import CommentSection from '@/components/CommentSection.vue';
 import ChocolateDisplay from '@/components/ChocolateDisplay.vue';
 import Orders from '@/components/Orders.vue';
+import Workers from '@/components/Workers.vue';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';

@@ -27,13 +27,19 @@
                 <div v-else class="col-5 d-flex align-items-center">
                     <h4 class="text-dark m-2">Not available</h4>
                 </div>
+                <div v-if="quantityOpen && userRole==='Worker'" class="col-4 d-flex align-items-center">
+                    <input type="number" class="form-control p-2 me-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="quantity"
+                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
+                    <a v-if="userRole === 'Worker' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editQuantity"><i class="fas fa-save"></i></a>
+                </div>
                 <div v-if="chocolate.quantity != 0 && userRole==='Customer'" class="col-4 d-flex align-items-center">
                     <h4 class="text-primary m-2">Buy:</h4>
                     <input type="number" class="form-control p-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="chocoInstance.quantity"
                     v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
                 </div>
-                <div class="col d-flex">
+                <div class="col d-flex align-items-center">
                     <a v-if="chocolate.quantity != 0 && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
+                    <a v-if="userRole === 'Worker' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editQuantityClick"><i class="fas fa-pencil-alt"></i></a>
                     <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editClick()"><i class="fas fa-pencil-alt"></i></a>
                     <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square rounded-circle" @click="deleteChocolate()"><i class="fas fa-trash-alt"></i></a>
                 </div>
@@ -48,7 +54,7 @@
 
     const userRole = localStorage.getItem('role') || '';
     const username = localStorage.getItem('username') || '';
-    const emit = defineEmits(['editEvent', 'deleteEvent', 'buyEvent']);
+    const emit = defineEmits(['editEvent', 'deleteEvent', 'buyEvent', 'editQuantityEvent']);
     const isInputValid = ref(true)
 
     const props = defineProps({
@@ -62,11 +68,24 @@
         }
     });
 
+    function editQuantityClick(){
+        quantityOpen.value = !quantityOpen.value;
+        quantity.value = props.chocolate.quantity;
+    }
+
+    const quantityOpen = ref(false);
+    const quantity = ref(0);
+
     const chocoInstance = ref({
 	    cartId : 0,
         chocholateId : props.chocolate.id,
 	    quantity : 1
     })
+
+    function editQuantity(){
+        emit('editQuantityEvent', { quantity: quantity.value, chocolateId: props.chocolate.id});
+        quantityOpen.value = !quantityOpen.value;
+    }
 
     function editClick(){
         emit('editEvent', props.chocolate);
@@ -115,7 +134,7 @@
     }
 
     function onInputChange(){
-        if(chocoInstance.value.quantity <= 0 || chocoInstance.value.quantity > props.chocolate.quantity){
+        if(quantity <= 0){
             isInputValid.value = false;
             return;
         }

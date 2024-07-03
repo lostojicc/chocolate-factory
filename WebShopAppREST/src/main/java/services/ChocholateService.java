@@ -17,6 +17,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -62,6 +63,24 @@ public class ChocholateService {
 		
 		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
 		return chochoContr.GetAll();
+	}
+	
+	@POST
+	@Path("updateQuantity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateQuantity(@HeaderParam("Authorization") String authorizationHeader, 
+									@QueryParam("chocolateId") int chocolateId, @QueryParam("quantity") int quantity) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Worker))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		ChocholateController chochoContr = conInjector.getController(ChocholateController.class);
+		
+		if(chochoContr.updateQuantity(chocolateId, quantity))
+			return Response.ok().build();
+		
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 	
 	@POST

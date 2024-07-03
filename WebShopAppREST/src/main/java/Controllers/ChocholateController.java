@@ -47,6 +47,14 @@ public class ChocholateController {
 		return CHODAo.Delete(GetById(id));
 	}
 	
+	public boolean updateQuantity(int chocolateId, int quantity) {
+		Chocholate chocolate = GetById(chocolateId);
+		
+		chocolate.setQuantity(quantity);
+		
+		return Update(chocolate);
+	}
+	
 	public ArrayList<Chocholate> getByFactoryId(int id){
 		ArrayList<Chocholate> chocholates = new ArrayList<>();
 		

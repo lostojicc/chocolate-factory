@@ -127,6 +127,17 @@ public class UserController{
 		return true;
 	}
 	
+	public Collection<User> getWorkersForFactory(int factoryId){
+		Collection<User> workers = new ArrayList<User>();
+		
+		for (User user : GetAll()) {
+			if(user.getRole() == UserRole.Worker && user.getFactoryId() == factoryId)
+				workers.add(user);
+		}
+		
+		return workers;
+	}
+	
 	public Collection<User> getSearched(UserSearchDTO search){
 		Collection<User> users = new ArrayList<User>();
 		

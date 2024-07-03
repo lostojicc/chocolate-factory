@@ -10,7 +10,8 @@
                             <div class="text-center">
                                 <small v-if="props.factory == null" class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Welcome</small>
                                 <h1 v-if="props.factory == null" class="display-5 mb-5">Sign up</h1>
-                                <h1 v-if="props.factory != null" class="display-5 mb-5">Register new manager</h1>
+                                <h1 v-if="props.factory != null && userRole == 'Administrator'" class="display-5 mb-5">Register new manager</h1>
+                                <h1 v-if="props.factory != null && userRole == 'Manager'" class="display-5 mb-5">Register new worker</h1>
                             </div>
                             <div class="row g-4 form">
                                 <div class="col-1">
@@ -91,7 +92,7 @@ import axios  from 'axios';
 import {ref, onMounted, defineProps, defineEmits} from 'vue';
 import { useRouter } from 'vue-router';
 
-const emit = defineEmits(['registeredManagerEvent']);
+const emit = defineEmits(['registeredManagerEvent', 'addedWorkerEvent']);
 
 const props = defineProps({
         factory: {
@@ -130,6 +131,7 @@ const requiredMessage = ref(' * Field required')
 const repeatMessage = ref(' * Passwords do not match')
 const dateMessage = ref(' * Date required')
 
+const userRole = ref(localStorage.getItem('role') || '');
 
 function Register(event){
     event.preventDefault();
@@ -171,10 +173,15 @@ function Register(event){
     }
 
     if(canRegister){
-        if(props.factory != null){
+        if(props.factory != null && userRole.value == 'Administrator'){
             user.value.role = 'Manager';
             props.factory.manager = user.value;
-            emit('registeredManagerEvent', user)
+            emit('registeredManagerEvent', user);
+            return;
+        }else if(props.factory != null && userRole.value == 'Manager'){
+            user.value.role = 'Worker';
+            user.value.factoryId = props.factory.id;
+            emit('addedWorkerEvent', user);
             return;
         }
 

@@ -122,6 +122,34 @@ public class UserService {
         return Response.ok(message).build();
 	}
 	
+	@POST
+	@Path("/registerWorker")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response registerWorker(User user) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		CustomerController customerController = conInjector.getController(CustomerController.class);
+		
+		if(userCont.GetByUsername(user.getUsername()) != null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Username")
+                    .build();
+		}
+		
+		if(!userCont.CheckUserValid(user)) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to register user")
+                    .build();
+		}
+		
+		userCont.Save(user);
+		
+		String message = "User registered successfully.";
+        return Response.ok(message).build();
+	}
+	
 	@GET
 	@Path("/get/{username}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -201,6 +229,22 @@ public class UserService {
 		
 		String message = "Users Name updated successfully.";
         return Response.ok(message).build();
+	}
+	
+	@GET
+	@Path("/getWorkers/{factoryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getWorkersForFactory(@HeaderParam("Authorization") String authorizationHeader, @PathParam("factoryId") int factoryId) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userController = conInjector.getController(UserController.class);
+		
+		Collection<User> workers = userController.getWorkersForFactory(factoryId);
+		
+		return Response.ok().entity(workers).build();
 	}
 	
 	@POST

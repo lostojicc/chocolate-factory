@@ -27,16 +27,18 @@
                 <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
                     <h1 class="display-5 mb-5">What Our Customers say!</h1>
                 </div>
-                <CommentCard v-for="comment in comments" :comment="comment" @loadEvent="loadComments()" :editable="editable"/>
+                <CommentCard v-for="comment in comments" :comment="comment" @loadEvent="reload()" :editable="editable"/>
         </div>
     </div>
 </template>
 
 <script setup>
     import CommentCard from '../components/CommentCard.vue';
-    import { defineProps } from 'vue';
+    import { defineProps, defineEmits } from 'vue';
     import {ref, onMounted } from 'vue';
     import axios from 'axios';
+
+    const emit = defineEmits(['commentPosted']);
 
     const props = defineProps({
         factory: {
@@ -76,9 +78,15 @@
         await CheckCanBeCommented();
     }
 
+    function reload(){
+        loadComments();
+        emit('commentPosted');
+    }
+
     async function loadComments(){
         if(userRole !== 'Manager' && userRole !== 'Administrator'){
             acceptedComments()
+            
         }
         else{
             allComments()
@@ -109,6 +117,7 @@
         try {
             const response = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/comments/acceptedComments/${props.factory.id}`);
             comments.value = response.data;
+            
         } catch (error) {
             console.error('Error loading comments:', error);
         }

@@ -33,7 +33,7 @@
                 </li>
             </ul>
             <ChocolateDisplay v-show="showTab === 'Chocolates'" :factory="factory" :editable="editable"/>
-            <CommentSection v-show="showTab === 'Comments'" :factory="factory" :editable="editable"/>
+            <CommentSection v-show="showTab === 'Comments'" :factory="factory" @commentPosted="loadFactory" :editable="editable"/>
             <Orders v-show="showTab === 'Orders'"/>
             <Workers v-show="showTab === 'Workers'" :factory="factory"/>
         </div>

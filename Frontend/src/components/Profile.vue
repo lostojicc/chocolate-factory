@@ -255,7 +255,7 @@ function signOut(){
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('username');
     localStorage.removeItem('role');
-    router.push("/login")
+    location.reload();
 }
 
 </script>

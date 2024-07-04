@@ -77,18 +77,21 @@ public class CommentController {
 		}
 		else if(logic == 1){
 			comment.setState(CommentState.Accepted);
-			UpdateFactoryGrade(comment.getFactoryId());
+			
 		}
 		else {
 			return false;
 		}
 		
-		return this.Update(comment);
+		boolean flag = this.Update(comment);
+		UpdateFactoryGrade(comment.getFactoryId());
+		
+		return flag;
 	}
 	
 	private void UpdateFactoryGrade(int factoryId) {
 		ArrayList<Comment> comments = (ArrayList<Comment>) this.GetAcceptedByFactoryId(factoryId);
-		double sum = 0;
+		double sum = 0.0;
 		double gradesNum = comments.size();
 		for(Comment comment:comments) {
 			sum+= comment.getGrade();
@@ -96,6 +99,7 @@ public class CommentController {
 		
 		double avgGrade = sum / gradesNum;
 		Factory fac = factoryController.getById(factoryId);
+		System.out.println(avgGrade);
 		fac.setRating(avgGrade);
 		factoryController.Update(fac);
 	}

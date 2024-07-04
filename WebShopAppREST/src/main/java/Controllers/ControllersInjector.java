@@ -31,20 +31,22 @@ public class ControllersInjector {
         FactoryController factoryController = getController(FactoryController.class);
         LocationController locationController = getController(LocationController.class);
         AddressController addressController = getController(AddressController.class);
+        CommentController commentController = getController(CommentController.class);
         
-        locationController.setDependency(addressController);
-        factoryController.setDependency(locationController, userController, chocholateController, addressController);
 
         ShoppingCartController shopingCartControler = getController(ShoppingCartController.class);
         ChocholateInstanceController chochoInstanceControler = getController(ChocholateInstanceController.class);
         OrderController orderController = getController(OrderController.class);
         CustomerController customerController = getController(CustomerController.class);
-
+        
+        locationController.setDependency(addressController);
+        factoryController.setDependency(locationController, userController, chocholateController, addressController);
         userController.setDependency(customerController);
         chocholateController.setDependency();
         shopingCartControler.setDependency(userController,chochoInstanceControler,chocholateController,orderController);
         customerController.setDependency(userController);
         orderController.setDependency(chochoInstanceControler, customerController, factoryController);
+        commentController.SetDependency(factoryController);
     }
 
     private void initializeControllers() {

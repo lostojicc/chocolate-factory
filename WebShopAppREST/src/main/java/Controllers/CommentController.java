@@ -12,9 +12,15 @@ public class CommentController {
 	private String contextPath;
 	private DAO commentDao;
 	
+	private FactoryController factoryController;
+	
 	public CommentController(String contextPath) {
 		this.contextPath = contextPath;
 		commentDao = new DAO<Comment>(contextPath, Comment.class);
+	}
+	
+	public void SetDependency(FactoryController facController) {
+		this.factoryController = facController;
 	}
 	
 	public Collection<Comment> getAll(){
@@ -71,6 +77,7 @@ public class CommentController {
 		}
 		else if(logic == 1){
 			comment.setState(CommentState.Accepted);
+			UpdateFactoryGrade(comment.getFactoryId());
 		}
 		else {
 			return false;
@@ -79,6 +86,20 @@ public class CommentController {
 		return this.Update(comment);
 	}
 	
+	private void UpdateFactoryGrade(int factoryId) {
+		ArrayList<Comment> comments = (ArrayList<Comment>) this.GetAcceptedByFactoryId(factoryId);
+		double sum = 0;
+		double gradesNum = comments.size();
+		for(Comment comment:comments) {
+			sum+= comment.getGrade();
+		}
+		
+		double avgGrade = sum / gradesNum;
+		Factory fac = factoryController.getById(factoryId);
+		fac.setRating(avgGrade);
+		factoryController.Update(fac);
+	}
+
 	public ArrayList<Comment> GetByUserIdAndFactoryId(int userId, int factoryId){
 		ArrayList<Comment> comments = new ArrayList<Comment>();
 		

@@ -2,17 +2,19 @@ package models;
 
 import serializer.ISerializable;
 
-public class ChocholateInstance implements IIdentifiable, ISerializable {
+public class ChocholateInstance implements IIdentifiable, ISerializable, IsDeletable {
 	private int id;
 	private int cartId;
 	private int chocholateId;
 	private int quantity;
 	private Boolean checkedOut;
+	private Boolean isDeleted;
 	
 	public ChocholateInstance() {
 		super();
 		this.checkedOut = false;
 		this.quantity = 0;
+		this.isDeleted = false;
 	}
 	
 	public ChocholateInstance(int CartId, int ChocoId, int quant, Boolean checkedOut) {
@@ -31,7 +33,8 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 				Integer.toString(cartId),
 				Integer.toString(chocholateId),
 				Integer.toString(quantity),
-				Boolean.toString(checkedOut)
+				Boolean.toString(checkedOut),
+				Boolean.toString(isDeleted)
 		};
 		return values;
 	}
@@ -43,6 +46,7 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 		this.chocholateId = Integer.parseInt(values[2]);
 		this.quantity = Integer.parseInt(values[3]);
 		this.checkedOut = Boolean.valueOf(values[4]);
+		this.isDeleted = Boolean.valueOf(values[5]);
 	}
 
 	public int getCartId() {
@@ -86,5 +90,17 @@ public class ChocholateInstance implements IIdentifiable, ISerializable {
 
 	public void setCheckedOut(Boolean checkedOut) {
 		this.checkedOut = checkedOut;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return this.isDeleted;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		this.isDeleted = isDeleted;
 	}
 }

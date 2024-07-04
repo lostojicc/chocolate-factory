@@ -7,7 +7,7 @@ import java.util.Date;
 import serializer.ISerializable;
 import utils.DateUtils;
 
-public class User implements IIdentifiable, ISerializable {
+public class User implements IIdentifiable, ISerializable, IsDeletable {
 	protected int id;
 	protected String username;
 	protected String password;
@@ -145,6 +145,18 @@ public class User implements IIdentifiable, ISerializable {
 
 	public void setBlocked(boolean isBlocked) {
 		this.isBlocked = isBlocked;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

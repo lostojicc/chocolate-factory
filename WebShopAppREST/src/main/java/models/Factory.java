@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 import serializer.ISerializable;
 
-public class Factory implements IIdentifiable, ISerializable{
+public class Factory implements IIdentifiable, ISerializable, IsDeletable{
 	private int id;
 	private String name;
 	private LocalTime openTime;
@@ -154,6 +154,22 @@ public class Factory implements IIdentifiable, ISerializable{
 
 	public void setLocationId(int locationId) {
 		this.locationId = locationId;
+	}
+
+
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

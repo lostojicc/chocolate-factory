@@ -2,7 +2,7 @@ package models;
 
 import serializer.ISerializable;
 
-public class CustomerType implements IIdentifiable, ISerializable {
+public class CustomerType implements IIdentifiable, ISerializable, IsDeletable {
 	private int id;
 	private CustomerTypeName typeName;
 	private double discount;
@@ -58,5 +58,17 @@ public class CustomerType implements IIdentifiable, ISerializable {
 
 	public void setPointsNeeded(int pointsNeeded) {
 		this.pointsNeeded = pointsNeeded;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 }

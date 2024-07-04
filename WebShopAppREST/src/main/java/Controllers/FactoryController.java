@@ -224,4 +224,8 @@ public class FactoryController {
 		return (Factory) factoryDao.GetById(id);
 	}
 	
+	public Boolean Update(Factory factory) {
+		return factoryDao.Update(factory);
+	}
+	
 }

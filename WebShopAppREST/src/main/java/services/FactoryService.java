@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -104,6 +105,19 @@ public class FactoryService {
 		else 
 			return Response.status(Response.Status.NOT_FOUND).build();
     }
+	
+	@DELETE
+	@Path("/delete/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteFactory(@PathParam("id") int factoryId) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		FactoryController controller = conInjector.getController(FactoryController.class);
+		
+		if(controller.delete(factoryId))
+			return Response.ok().build();
+		
+		return Response.status(Response.Status.BAD_REQUEST).entity("Could not delete this factory!").build();
+	}
 
     @GET
     @Path("/location/address/{id}")

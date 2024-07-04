@@ -39,7 +39,19 @@ public class FactoryController {
 			
 	
 	public Collection<Factory> getAll(){
-		return factoryDao.GetAll();
+		ArrayList<Factory> factories = factoryDao.GetAll();
+		ArrayList<Factory> newFactories = new ArrayList<Factory>();
+		
+		for (Factory factory : factories) {
+			if(!factory.isDeleted()) {
+				System.out.println(factory.getId());
+				newFactories.add(factory);
+			}
+				
+		}
+		
+		
+		return newFactories;
 	}
 	
 	public Factory Save(FactoryDTO factory) {
@@ -69,6 +81,7 @@ public class FactoryController {
 		Collection<Factory> factories = new ArrayList<Factory>();
 		
 		for (Factory factory : getAll()) {
+			System.out.println(factory.getId());
 			if (factory.getStatus() == OpenStatus.OPEN) 
 				factories.add(factory);
 		}
@@ -78,7 +91,39 @@ public class FactoryController {
 				factories.add(factory);
 		}
 		
+		for (Factory factory : factories) {
+			System.out.println("Too" + factory.getId());
+		}
 		return factories;
+	}
+	
+	private void deleteChocolatesForFactory(int factoryId) {
+		for (Chocholate chocolate : chocholateController.getByFactoryId(factoryId)) 
+			chocholateController.Delete(chocolate.getId());
+	}
+	
+	private void releaseManager(int factoryId) {
+		User manager = userController.getManagerByFactoryId(factoryId);
+		
+		if(manager != null) {
+			manager.setFactoryId(0);
+			userController.update(manager);
+		}
+	}
+	
+	private void deleteFactoryWorkers(int factoryId) {
+		for (User worker : userController.getWorkersForFactory(factoryId)) 
+			userController.delete(worker.getId());
+	}
+	
+	public boolean delete(int factoryId) {
+		Factory factory = getById(factoryId);
+		
+		deleteChocolatesForFactory(factoryId);
+		releaseManager(factoryId);
+		deleteFactoryWorkers(factoryId);
+		
+		return factoryDao.Delete(factory);
 	}
 	
 	private boolean matchesChocolate(Factory factory, FactorySearchDTO search) {

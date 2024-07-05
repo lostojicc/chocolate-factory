@@ -8,8 +8,11 @@ import java.util.List;
 import javax.naming.ldap.ManageReferralControl;
 
 import dao.DAO;
+import dto.UserDTO;
 import dto.UserSearchDTO;
 import models.Customer;
+import models.CustomerType;
+import models.CustomerTypeName;
 import models.Factory;
 import models.Gender;
 import models.User;
@@ -136,13 +139,26 @@ public class UserController{
 		return false;
 	}
 	
+	private boolean matchesType(User user, UserSearchDTO search) {
+		if(search.getType().isBlank())
+			return true;
+		
+		if(user.getRole() == UserRole.Customer) {
+			Customer customer = customerController.GetByUserId(user.getId());
+			return customerController.GetCustomerTypeNameByCustomer(customer).toString().equals(search.getType());
+		}
+		
+		return false;
+	}
+	
 	private boolean matchesSearch(User user, UserSearchDTO search) {
 		return matchesName(user, search) &&
 				matchesSurname(user, search) &&
 				matchesUsername(user, search) &&
 				matchesRole(user, search) &&
 				matchesBlocked(user, search) &&
-				matchesSus(user, search);
+				matchesSus(user, search) &&
+				matchesType(user, search);
 	}
 	
 	private boolean matchesRole(User user, UserSearchDTO search) {
@@ -169,12 +185,18 @@ public class UserController{
 		return workers;
 	}
 	
-	public Collection<User> getSearched(UserSearchDTO search){
-		Collection<User> users = new ArrayList<User>();
+	public Collection<UserDTO> getSearched(UserSearchDTO search){
+		Collection<UserDTO> users = new ArrayList<UserDTO>();
 		
 		for (User user : GetAll()) {
-			if(matchesSearch(user, search) && !user.isDeleted())
-				users.add(user);
+			if(matchesSearch(user, search) && !user.isDeleted()) {
+				int points = 0;
+				if(user.getRole() == UserRole.Customer) {
+					Customer customer = customerController.GetByUserId(user.getId());
+					points = customer.getPoints();
+				}
+				users.add(new UserDTO(user, points));
+			}	
 		}
 		
 		return users;

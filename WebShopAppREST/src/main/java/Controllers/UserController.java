@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.naming.ldap.ManageReferralControl;
+
 import dao.DAO;
 import dto.UserSearchDTO;
 import models.Customer;
@@ -28,11 +30,36 @@ public class UserController{
 		UserDao = new DAO<User>(contextPath, User.class);
 	}
 	public ArrayList<User> GetAll(){
-		/*User user = new User("kita", "mika", "ludajaja123", "stefan", Gender.Female , LocalDate.now(),
-				UserRole.Administrator);
-		UserDao.Save(user);*/
+		ArrayList<User> allUsers = UserDao.GetAll();
+		ArrayList<User> users = new ArrayList<User>();
 		
-		return UserDao.GetAll();
+		for (User user : allUsers) {
+			if(user.getRole() == UserRole.Worker && user.isDeleted())
+				continue;
+			users.add(user);
+		}
+		
+		return users;
+	}
+	
+	private Collection<User> getManagers(){
+		Collection<User> managers = new ArrayList<User>();
+		
+		for (User user : GetAll()) {
+			if(user.getRole() == UserRole.Manager)
+				managers.add(user);
+		}
+		
+		return managers;
+	}
+	
+	public User getManagerByFactoryId(int factoryId) {
+		for (User manager : getManagers()) {
+			if(manager.getFactoryId() == factoryId)
+				return manager;
+		}
+		
+		return null;
 	}
 	
 	public User getById(int id) {
@@ -41,6 +68,10 @@ public class UserController{
 	
 	public Boolean Update(User user) {
 		return UserDao.Update(user);
+	}
+	
+	public boolean delete(int userId) {
+		return UserDao.Delete(getById(userId));
 	}
 	
 	public User GetByUsername(String username) {
@@ -131,7 +162,7 @@ public class UserController{
 		Collection<User> workers = new ArrayList<User>();
 		
 		for (User user : GetAll()) {
-			if(user.getRole() == UserRole.Worker && user.getFactoryId() == factoryId)
+			if(user.getRole() == UserRole.Worker && user.getFactoryId() == factoryId && !user.isDeleted())
 				workers.add(user);
 		}
 		
@@ -142,7 +173,7 @@ public class UserController{
 		Collection<User> users = new ArrayList<User>();
 		
 		for (User user : GetAll()) {
-			if(matchesSearch(user, search))
+			if(matchesSearch(user, search) && !user.isDeleted())
 				users.add(user);
 		}
 		

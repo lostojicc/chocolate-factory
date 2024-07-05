@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 import serializer.ISerializable;
 
-public class Factory implements IIdentifiable, ISerializable{
+public class Factory implements IIdentifiable, ISerializable, IsDeletable{
 	private int id;
 	private String name;
 	private LocalTime openTime;
@@ -14,9 +14,10 @@ public class Factory implements IIdentifiable, ISerializable{
 	private int locationId;
 	private String imagePath;
 	private double rating;
+	private boolean isDeleted;
 	
 	public Factory() {
-		
+		isDeleted = false;
 	}
 	
 	
@@ -44,7 +45,8 @@ public class Factory implements IIdentifiable, ISerializable{
 				status.toString(),
 				Integer.toString(locationId),
 				imagePath,
-				Double.toString(rating)
+				Double.toString(rating),
+				Boolean.toString(isDeleted)
 		};
 		return values;
 	}
@@ -60,6 +62,7 @@ public class Factory implements IIdentifiable, ISerializable{
 		this.locationId = Integer.parseInt(values[5]);
 		this.imagePath = values[6];
 		this.rating = Double.parseDouble(values[7]);
+		this.isDeleted = Boolean.parseBoolean(values[8]);
 	}
 
 	
@@ -154,6 +157,22 @@ public class Factory implements IIdentifiable, ISerializable{
 
 	public void setLocationId(int locationId) {
 		this.locationId = locationId;
+	}
+
+
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return isDeleted;
+	}
+
+
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		this.isDeleted = isDeleted;
 	}
 	
 	

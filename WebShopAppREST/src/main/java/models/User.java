@@ -7,7 +7,7 @@ import java.util.Date;
 import serializer.ISerializable;
 import utils.DateUtils;
 
-public class User implements IIdentifiable, ISerializable {
+public class User implements IIdentifiable, ISerializable, IsDeletable {
 	protected int id;
 	protected String username;
 	protected String password;
@@ -18,9 +18,10 @@ public class User implements IIdentifiable, ISerializable {
 	protected UserRole role;
 	protected int factoryId;
 	protected boolean isBlocked;
+	protected Boolean isDeleted;
 	
 	public User() {
-		
+		isDeleted = false;
 	}
 
 	public User(String username, String password, String name, String surname, Gender gender, LocalDate dateOfBirth,
@@ -48,7 +49,8 @@ public class User implements IIdentifiable, ISerializable {
 				dateOfBirth.toString(),
 				role.name(),
 				Integer.toString(factoryId),
-				Boolean.toString(isBlocked)
+				Boolean.toString(isBlocked),
+				Boolean.toString(isDeleted)
 		};
 		return values;
 	}
@@ -65,6 +67,7 @@ public class User implements IIdentifiable, ISerializable {
 		this.role = UserRole.valueOf(values[7]);
 		this.factoryId = Integer.parseInt(values[8]);
 		this.isBlocked = Boolean.parseBoolean(values[9]);
+		this.isDeleted = Boolean.parseBoolean(values[10]);
 	}
 
 	public int getId() {
@@ -145,6 +148,18 @@ public class User implements IIdentifiable, ISerializable {
 
 	public void setBlocked(boolean isBlocked) {
 		this.isBlocked = isBlocked;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return isDeleted;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		this.isDeleted = isDeleted;
 	}
 	
 	

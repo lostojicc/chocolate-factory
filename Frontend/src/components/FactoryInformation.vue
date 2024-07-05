@@ -12,7 +12,7 @@
                             <div class="d-flex align-items-center">
                             <i v-for="n in filledStars" class="fas fa-star text-primary"></i>
                             <i v-for="n in emptyStars" class="far fa-star text-primary"></i>
-                            <h5 class="m-2"> {{ factory.rating }}</h5>
+                            <h5 class="m-2"> {{ factory.rating.toFixed(2) }}</h5>
                         </div>
                     </div>
                     </div>

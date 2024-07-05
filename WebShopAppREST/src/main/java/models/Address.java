@@ -2,7 +2,7 @@ package models;
 
 import serializer.ISerializable;
 
-public class Address implements IIdentifiable, ISerializable{
+public class Address implements IIdentifiable, ISerializable, IsDeletable{
 	private int id;
 	private String street;
 	private String city;
@@ -104,6 +104,22 @@ public class Address implements IIdentifiable, ISerializable{
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

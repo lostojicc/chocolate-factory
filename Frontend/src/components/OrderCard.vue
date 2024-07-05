@@ -16,7 +16,7 @@
                     </div>
                 </div>
               <div class="col-md-6 d-flex-column align-items-top justify-content-start">
-                <p style="font-size: 1.5em;" class="text-dark"><strong>Total:</strong> ${{ order.price }}</p>
+                <p style="font-size: 1.5em;" class="text-dark"><strong>Total:</strong> ${{ order.price.toFixed(2) }}</p>
                 <button type="submit" class="btn btn-primary btn-md mb-3 rounded-pill" v-on:click="ToggleViewButton()"><i class="fas fa-eye mx-1"></i>Items</button>
               </div>
             </div>

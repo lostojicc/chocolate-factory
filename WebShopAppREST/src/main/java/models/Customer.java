@@ -7,7 +7,7 @@ import javax.sql.rowset.JoinRowSet;
 import serializer.ISerializable;
 import utils.DateUtils;
 
-public class Customer implements IIdentifiable, ISerializable{
+public class Customer implements IIdentifiable, ISerializable, IsDeletable{
 	private int id;
 	private int userId;
 	private int points;
@@ -79,6 +79,18 @@ public class Customer implements IIdentifiable, ISerializable{
 
 	public void setSuspicious(boolean isSuspicious) {
 		this.isSuspicious = isSuspicious;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

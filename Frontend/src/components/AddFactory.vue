@@ -59,6 +59,7 @@
 
 <script setup>
     import { ref, onMounted, watch } from 'vue';
+    import {useRouter} from 'vue-router';
     import axios from 'axios';
     import 'ol/ol.css';
     import Map from 'ol/Map';
@@ -81,6 +82,8 @@ import RegisterForm from './RegisterForm.vue';
     function testtest(){
         console.log(factory.value.manager);
     }
+
+    const router = useRouter();
 
     const managers = ref([]);
     const factory = ref({
@@ -153,8 +156,7 @@ import RegisterForm from './RegisterForm.vue';
                 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
             }}).then( response => {
             if (response.status === 200){
-                alert('Factory created successfully!');
-                //emit
+                router.push('/');
             }        
         }).catch(error => {
             console.error(error.response.data);

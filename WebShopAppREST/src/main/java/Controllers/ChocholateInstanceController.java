@@ -21,7 +21,20 @@ public class ChocholateInstanceController {
 	}
 	@SuppressWarnings("unchecked")
 	public ArrayList<ChocholateInstance> GetAll(){
-		return ChocholateInstanceDAO.GetAll();
+		ArrayList<ChocholateInstance> list = ChocholateInstanceDAO.GetAll();
+		ArrayList<ChocholateInstance> newList = new ArrayList<ChocholateInstance>();
+		for(ChocholateInstance chocoInstance: list) {
+			if(!chocoInstance.isDeleted()) 
+				newList.add(chocoInstance);
+		}
+		
+		return newList;
+	}
+	
+	public void DeleteByChocholateId(int chocolateId) {
+		for(ChocholateInstance choco: this.GetNotCheckedByChocolateId(chocolateId)) {
+			ChocholateInstanceDAO.Delete(choco);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -52,6 +65,17 @@ public class ChocholateInstanceController {
 		}
 		
 		return null;
+	}
+	
+	public ArrayList<ChocholateInstance> GetNotCheckedByChocolateId(int chocolateId){
+		ArrayList<ChocholateInstance> chocholates = new ArrayList<ChocholateInstance>();
+		
+		for(ChocholateInstance choco : this.GetAll()) {
+			if(choco.getChocholateId() == chocolateId && !choco.getCheckedOut())
+				chocholates.add(choco);
+		}
+		
+		return chocholates;
 	}
 	
 	public void Update(ChocholateInstance choco) {

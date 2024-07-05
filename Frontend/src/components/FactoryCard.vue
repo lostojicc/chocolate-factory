@@ -6,7 +6,7 @@
             </div>
             <div class="col-lg-8 wow bounceInUp" data-wow-delay="0.3s">
                 <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">{{ factory.status }}</small>
-                <h1 class="display-5 mb-4">{{ factory.name }}</h1>
+                <h1 class="display-5 mb-4">{{ factory.name }} <button v-if="userRole == 'Administrator'" @click="deleteFactory" class="btn-search btn btn-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-trash-alt"></i></button></h1>
                 <p class="mb-4">Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore eit esdioilore magna aliqua. Ut enim ad minim veniam, 
                     quis nostrud exercitation ullaemco laboeeiris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
                     dolor iesdein reprehendeerit in voluptate velit esse cillum dolore.</p>
@@ -27,7 +27,7 @@
                         <div class="d-flex justify-content-center align-items-center">
                             <i v-for="n in filledStars" class="fas fa-star text-primary"></i>
                             <i v-for="n in emptyStars" class="far fa-star text-primary"></i>
-                            <h5 class="m-2"> {{ factory.rating }}</h5>
+                            <h5 class="m-2"> {{ factory.rating.toFixed(2) }}</h5>
                         </div>     
                     </div>
                     <div class="col-md-6">
@@ -43,7 +43,15 @@
 </template>
 
 <script setup>
-    import { defineProps, computed } from 'vue';
+    import { defineProps, computed, ref, defineEmits } from 'vue';
+
+    const emit = defineEmits(['deleteEvent']);
+
+    function deleteFactory(){
+        emit('deleteEvent', props.factory.id);
+    }
+
+    const userRole = ref(localStorage.getItem('role') || '');
 
     const props = defineProps({
     factory: {

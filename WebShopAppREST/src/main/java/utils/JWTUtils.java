@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -46,6 +48,9 @@ public class JWTUtils {
     }
 	
 	public static <T> boolean IsRoleCorrect(String authorizationHeader, T role) {
+		if(authorizationHeader == null)
+			return false;
+		
 		JWTClaimsSet claimsSet = null;
 		
 		try {

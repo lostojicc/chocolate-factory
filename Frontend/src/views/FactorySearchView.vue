@@ -12,7 +12,7 @@
                     <input type="text" class="border form-control border-primary p-2 rounded-pill height w-20" placeholder="Location" v-model="searchParams.location"/>
                 </div>
                 <div class="col-2">
-                    <input type="number" class="border form-control border-primary p-2 rounded-pill height w-20" placeholder="Rating" v-model="searchParams.rating"/>
+                    <input type="number" min="0" max="5" class="border form-control border-primary p-2 rounded-pill height w-20" placeholder="Rating" v-model="searchParams.rating"/>
                 </div>
                 <div class="col-1">
                     <button @click="searchClick()" class="btn-search btn btn-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>

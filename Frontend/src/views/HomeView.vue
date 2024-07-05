@@ -5,7 +5,7 @@
             <div class="spinner-grow text-primary" role="status"></div>
         </div>
         <div v-else>
-            <FactoryCard v-for="factory in factories" :key="factory.id" :factory="factory"/>
+            <FactoryCard v-for="factory in factories" @deleteEvent="handleDeleteEvent" :key="factory.id" :factory="factory"/>
         </div>
     </div>
 </template>
@@ -24,10 +24,24 @@
 
     onMounted(async () => {
         await loadFactories();
-        loading.value = false;
+        
     });
 
+    function handleDeleteEvent(data){
+        if (confirm("Are you sure you want to delete this factory?") == true) 
+            handleDeleteConfirmationEvent(data);
+    }
+
+    function handleDeleteConfirmationEvent(data){
+        axios.delete(`http://localhost:8080/WebShopAppREST/rest/factory/delete/${data}`).then(response => {
+            loadFactories();
+        }).catch(error => {
+            console.error(error.response.data);
+        });
+    }
+
     async function loadFactories() {
+        loading.value = true;
         try {
             const factoryResponse = await axios.get("http://localhost:8080/WebShopAppREST/rest/factory/");
             factories.value = factoryResponse.data;
@@ -39,6 +53,8 @@
                 const addressResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/location/address/${factory.location.addressId}`);
                 factory.location.address = addressResponse.data;
             }
+
+            loading.value = false;
         } catch (error) {
             console.error('Error loading factories:', error);
         }

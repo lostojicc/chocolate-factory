@@ -2,7 +2,7 @@ package models;
 
 import serializer.ISerializable;
 
-public class Location implements IIdentifiable, ISerializable{
+public class Location implements IIdentifiable, ISerializable, IsDeletable{
 	private int id;
 	private double latitude;
 	private double longitude;
@@ -91,6 +91,22 @@ public class Location implements IIdentifiable, ISerializable{
 
 	public void setAddressId(int addressId) {
 		this.addressId = addressId;
+	}
+
+
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

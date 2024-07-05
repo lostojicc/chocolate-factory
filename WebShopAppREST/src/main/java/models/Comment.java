@@ -2,7 +2,7 @@ package models;
 
 import serializer.ISerializable;
 
-public class Comment implements ISerializable, IIdentifiable {
+public class Comment implements ISerializable, IIdentifiable, IsDeletable {
 	private int id;
 	private int userId;
 	private int factoryId;
@@ -95,5 +95,17 @@ public class Comment implements ISerializable, IIdentifiable {
 	@Override
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 }

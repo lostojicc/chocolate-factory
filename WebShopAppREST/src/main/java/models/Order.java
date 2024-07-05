@@ -7,7 +7,7 @@ import java.util.Date;
 
 import serializer.ISerializable;
 
-public class Order implements IIdentifiable, ISerializable {
+public class Order implements IIdentifiable, ISerializable, IsDeletable {
 	private int id;
 	private String identification;
 	private ArrayList<Integer> chocholateIds;
@@ -142,5 +142,17 @@ public class Order implements IIdentifiable, ISerializable {
 	public void setId(int id) {
 		// TODO Auto-generated method stub
 		this.id = id;
+	}
+
+	@Override
+	public Boolean isDeleted() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDeleted(Boolean isDeleted) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <UserCard v-for="worker in workers" :user="worker"/>
+                        <UserCard v-for="worker in workers" :user="worker" @deleteWorker="deleteWorker"/>
                     </div>
                 </div>
             </div>
@@ -39,6 +39,16 @@
     onMounted(async () => {
         loadWorkers();
     });
+
+    function deleteWorker(id){
+        axios.delete(`http://localhost:8080/WebShopAppREST/rest/factory/fire/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+            }
+        }).then(() => loadWorkers()).catch(error => {
+            console.error(error.response.data);
+        });
+    }
 
     function handleAddEvent(user){
         axios.post('http://localhost:8080/WebShopAppREST/rest/user/register', user.value)

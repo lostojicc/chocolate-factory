@@ -38,5 +38,10 @@
         }
     });
 
-    const emit = defineEmits(['blockUser']);
+    function deleteUser(){
+        if(confirm("Are you sure you want to fire this worker?") == true)
+            emit('deleteWorker', props.user.id)
+    }
+
+    const emit = defineEmits(['blockUser', 'deleteWorker']);
 </script>

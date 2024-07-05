@@ -258,6 +258,22 @@ public class FactoryService {
 
     }
     
+    @DELETE
+    @Path("/fire/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@HeaderParam("Authorization") String authorizationHeader, @PathParam("id") int id) {
+    	if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+    	
+    	ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+    	UserController controller = conInjector.getController(UserController.class);
+    	
+    	if(controller.delete(id))
+    		return Response.ok().build();
+    	
+    	return Response.status(Status.BAD_REQUEST).build();
+    }
+    
     @POST
     @Path("/comments/addComment/{username}")
     @Produces(MediaType.APPLICATION_JSON)

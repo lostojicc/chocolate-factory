@@ -178,8 +178,15 @@ onMounted(async () => {
 });
 
 function load(){
+    if(userRole === ''){
+        router.push('/')
+        return
+    }
     if(userRole === 'Customer'){
         loadCustomer()
+    }
+    else{
+        loadUser()
     }
 }
 
@@ -192,6 +199,21 @@ function loadCustomer(){
         if (response.status === 200) {
             user.value = response.data
             customer.value = response.data
+        }
+    }).catch(error => {
+        console.error(error.response.data + " | Error status: " + error.response.status);
+        router.push('/')
+    });
+}
+
+function loadUser(){
+    axios.get(`http://localhost:8080/WebShopAppREST/rest/user/getUser/${username}`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        }
+    }).then(response => {
+        if (response.status === 200) {
+            user.value = response.data
         }
     }).catch(error => {
         console.error(error.response.data + " | Error status: " + error.response.status);

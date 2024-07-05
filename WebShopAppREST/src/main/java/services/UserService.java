@@ -154,7 +154,7 @@ public class UserService {
 	@Path("/get/{username}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response GetCartByUsername(@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
+	public Response GetCustomerByUsername(@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
 		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		
@@ -182,6 +182,25 @@ public class UserService {
 		CustomerDTO customerDTO = new CustomerDTO(user, customer.getPoints(), customerType);
 		
 		return Response.ok().entity(customerDTO).build();
+	}
+	
+	@GET
+	@Path("/getUser/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetByUsername(@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userController = conInjector.getController(UserController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to get user")
+                    .build();
+		}
+		
+		return Response.ok().entity(user).build();
 	}
 	
 	

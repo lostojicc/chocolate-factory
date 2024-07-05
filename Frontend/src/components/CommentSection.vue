@@ -1,8 +1,7 @@
 <template>
-    <div class="container-fluid py-6">
-        <div v-if="canComment" class="container">
+    <div class="container-fluid menu py-6">
+        <div v-if="canComment" class="container mb-5">
             <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
-                    <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Comments</small>
                     <h1 class="display-5 mb-5">Leave a comment!</h1>
             </div>
             <div class="comment-container d-flex flex-column justify-content-around align-items-center">
@@ -23,8 +22,9 @@
                 </button>
             </div>
         </div>
-        <div class="container py-6">
+        <div class="container">
                 <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
+                    <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Comments</small>
                     <h1 class="display-5 mb-5">What Our Customers say!</h1>
                 </div>
                 <CommentCard v-for="comment in comments" :comment="comment" @loadEvent="reload()" :editable="editable"/>

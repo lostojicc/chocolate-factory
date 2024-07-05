@@ -1,5 +1,7 @@
 package dto;
 
+import models.CustomerType;
+
 public class UserSearchDTO {
 	private String name;
 	private String surname;
@@ -7,9 +9,9 @@ public class UserSearchDTO {
 	private String role;
 	private boolean blocked;
 	private boolean sus;
+	private String type;
 	
 	public UserSearchDTO() {
-		
 	}
 	
 	
@@ -62,6 +64,17 @@ public class UserSearchDTO {
 	public void setSus(boolean sus) {
 		this.sus = sus;
 	}
-	
-	
+
+
+
+	public String getType() {
+		return type;
+	}
+
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 }

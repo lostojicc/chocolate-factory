@@ -25,6 +25,7 @@ import Controllers.ShoppingCartController;
 import Controllers.UserController;
 import dao.DAO;
 import dto.CustomerDTO;
+import dto.UserDTO;
 import dto.UserSearchDTO;
 import models.Chocholate;
 import models.Customer;
@@ -61,7 +62,7 @@ public class UserService {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		UserController userCont = conInjector.getController(UserController.class);
 		
-		Collection<User> users = userCont.getSearched(search);
+		Collection<UserDTO> users = userCont.getSearched(search);
 		
 		return Response.ok().entity(users).build();
 	}

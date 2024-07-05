@@ -7,8 +7,8 @@
                 <p class="text-white mb-0" :class="{ 'text-decoration-line-through' : user.blocked }">@{{ user.username }} - {{ user.role }}</p>
             </div>
             <div class="team-icon d-flex flex-column justify-content-center m-4">
-                <button v-if="userRole == 'Administrator' && user.role != 'Administrator'" @click="blockUser" class="share btn btn-primary btn-md-square mb-2 rounded-circle d-none d-lg-inline-flex" href=""><i :class="{ 'fas fa-ban' : !user.blocked, 'fas fa-check-circle' : user.blocked }"></i></button>
-                <button v-if="userRole == 'Manager' && user.role == 'Worker'" @click="deleteUser" class="btn btn-primary btn-md-square mb-2 rounded-circle d-none d-lg-inline-flex" :class="{ 'share-link' : userRole == 'Administrator', 'share' : userRole == 'Manager'}" href=""><i class="fas fa-user-slash"></i></button>
+                <button v-if="userRole == 'Administrator' && user.role != 'Administrator'" @click="blockUser" class="share-link btn btn-primary btn-md-square mb-2 rounded-circle d-none d-lg-inline-flex" href=""><i :class="{ 'fas fa-ban' : !user.blocked, 'fas fa-check-circle' : user.blocked }"></i></button>
+                <button v-if="userRole == 'Manager' && user.role == 'Worker'" @click="deleteUser" class="share-link btn btn-primary btn-md-square mb-2 rounded-circle d-none d-lg-inline-flex" :class="{ 'share-link' : userRole == 'Administrator', 'share' : userRole == 'Manager'}" href=""><i class="fas fa-user-slash"></i></button>
             </div>
         </div>
     </div>

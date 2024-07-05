@@ -77,7 +77,7 @@
                 <ul class="nav nav-pills d-inline-flex justify-content-center mb-2 wow bounceInUp" data-wow-delay="0.1s">
                     <li class="nav-item p-2" v-on:click="setTypeFilter('All')">
                         <button class="d-flex py-2 mx-2 border border-primary  rounded-pill active" data-bs-toggle="pill" 
-                        :class="{ 'bg-primary': !searchParams.blocked && !searchParams.sus, 'bg-white' : searchParams.blocked || searchParams.sus}">
+                        :class="{ 'bg-primary': !searchParams.blocked && !searchParams.sus && searchParams.type == '', 'bg-white' : searchParams.blocked || searchParams.sus || searchParams.type != ''}">
                             <span class="text-dark" style="width: 150px;">All</span>
                         </button>
                     </li>
@@ -87,10 +87,28 @@
                             <span class="text-dark" style="width: 150px;">Blocked</span>
                         </button>
                     </li>
-                    <li class="nav-item p-2" v-on:click="setTypeFilter('Sus')">
+                    <li v-if="searchParams.role == 'Customer'" class="nav-item p-2" v-on:click="setTypeFilter('Sus')">
                         <button class="d-flex py-2 mx-2 border border-primary rounded-pill" data-bs-toggle="pill"
                         :class="{ 'bg-primary': searchParams.sus, 'bg-white' : !searchParams.sus}">
                             <span class="text-dark" style="width: 150px;">Suspicious</span>
+                        </button>
+                    </li>
+                    <li v-if="searchParams.role == 'Customer'" class="nav-item p-2" v-on:click="setTypeFilter('Bronze')">
+                        <button class="d-flex py-2 mx-2 border border-primary rounded-pill" data-bs-toggle="pill"
+                        :class="{ 'bg-primary': searchParams.type == 'Bronze', 'bg-white' : searchParams.type != 'Bronze'}">
+                            <span class="text-dark" style="width: 150px;">Bronze</span>
+                        </button>
+                    </li>
+                    <li v-if="searchParams.role == 'Customer'" class="nav-item p-2" v-on:click="setTypeFilter('Silver')">
+                        <button class="d-flex py-2 mx-2 border border-primary rounded-pill" data-bs-toggle="pill"
+                        :class="{ 'bg-primary': searchParams.type == 'Silver', 'bg-white' : searchParams.type != 'Silver'}">
+                            <span class="text-dark" style="width: 150px;">Silver</span>
+                        </button>
+                    </li>
+                    <li v-if="searchParams.role == 'Customer'" class="nav-item p-2" v-on:click="setTypeFilter('Gold')">
+                        <button class="d-flex py-2 mx-2 border border-primary rounded-pill" data-bs-toggle="pill"
+                        :class="{ 'bg-primary': searchParams.type == 'Gold', 'bg-white' : searchParams.type != 'Gold'}">
+                            <span class="text-dark" style="width: 150px;">Gold</span>
                         </button>
                     </li>
                 </ul>
@@ -111,37 +129,37 @@
                 </div>
 
                 <div class="col-3 d-flex justify-content-center align-items-center">
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortNameDown()">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortSurnameDown()">
                         <i class="fas fa-sort-down"></i>
                     </a>
                     <label class="text-dark border-bottom border-primary">
                         Surname
                     </label>
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortNameUp()">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortSurnameUp()">
                         <i class="fas fa-sort-up"></i>
                     </a>
                 </div>
 
                 <div class="col-3 d-flex justify-content-center align-items-center mx-2">
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortLocationDown()">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortUsernameDown()">
                         <i class="fas fa-sort-down"></i>
                     </a>
                     <label class="text-dark border-bottom border-primary">
                         Username
                     </label>
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortLocationUp()">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortUsernameUp()">
                         <i class="fas fa-sort-up"></i>
                     </a>
                 </div>
 
-                <div class="col-3 d-flex justify-content-center align-items-center">
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortRatingDown()">
+                <div v-if="searchParams.role == 'Customer'" class="col-3 d-flex justify-content-center align-items-center">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortPointsDown()">
                         <i class="fas fa-sort-down"></i>
                     </a>
                     <label class="text-dark border-bottom border-primary">
                         Customer points
                     </label>
-                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortRatingUp()">
+                    <a class="btn btn-primary btn-sm-square m-2 rounded-circle d-flex  align-items-center justify-content-center" @click="SortPointsUp()">
                         <i class="fas fa-sort-up"></i>
                     </a>
                 </div>
@@ -191,7 +209,55 @@
         }
     }
 
+    function SortNameUp() {
+        users.value.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+        });
+    }
+
+    function SortNameDown() {
+        users.value.sort((a, b) => {
+            return b.name.localeCompare(a.name);
+        });
+    }
+
+    function SortSurnameUp() {
+        users.value.sort((a, b) => {
+            return a.surname.localeCompare(b.surname);
+        });
+    }
+
+    function SortSurnameDown() {
+        users.value.sort((a, b) => {
+            return b.surname.localeCompare(a.surname);
+        });
+    }
+
+    function SortUsernameUp() {
+        users.value.sort((a, b) => {
+            return a.username.localeCompare(b.username);
+        });
+    }
+
+    function SortUsernameDown() {
+        users.value.sort((a, b) => {
+            return b.username.localeCompare(a.username);
+        });
+    }
+
+    function SortPointsUp() {
+        users.value.sort((a, b) => a.points - b.points);
+    }
+
+    function SortPointsDown(){
+        users.value.sort((a, b) => b.points - a.points);
+    }
+
     function setRoleFilter(role){
+        if(searchParams.value.role == 'Customer'){
+            searchParams.value.sus = false;
+            searchParams.value.type = '';
+        }
         searchParams.value.role = role;
         loadUsers()
     }
@@ -205,6 +271,7 @@
             case 'All':
                 searchParams.value.blocked = false;
                 searchParams.value.sus = false;
+                searchParams.value.type = '';
                 break;
             case 'Blocked':
                 searchParams.value.blocked = !searchParams.value.blocked;
@@ -213,6 +280,7 @@
                 searchParams.value.sus = !searchParams.value.sus;
                 break;
             default:
+                searchParams.value.type = type;
                 break;
         }
 
@@ -225,6 +293,7 @@
         username: '',
         role: '',
         sus: false,
+        type: '',
         blocked: false
     });
 

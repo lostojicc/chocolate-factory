@@ -5,7 +5,7 @@
                     <h1 class="display-5 mb-5">Leave a comment!</h1>
             </div>
             <div class="comment-container d-flex flex-column justify-content-around align-items-center">
-                <textarea v-model="comment.text" class="w-100 form-control mb-4 p-3 border-primary bg-light" rows="4" cols="10" placeholder="Enter your comment" @input="textChanged()"></textarea>
+                <textarea v-model="comment.text" class="w-100 form-control mb-4 p-3 border-primary bg-light" rows="4" cols="10" placeholder="Enter your comment"></textarea>
                 <span v-if="showCommentValidation" class="red mb-3">Please write a comment before submitting</span>
                 <span v-if="showGradeValidation" class="red mb-3">Please select a grade before submitting</span>
                 <div class="grade-buttons">
@@ -148,12 +148,9 @@
         comment.value.grade = grade;
     }
 
-    function textChanged(){
-        showCommentValidation.value = false;
-    }
-
     async function SubmitClick(){
         let logic = true
+        showCommentValidation.value = false;
         if(comment.value.grade === 0){
             showGradeValidation.value = true
             logic = false

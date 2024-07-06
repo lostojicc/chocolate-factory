@@ -4,6 +4,7 @@ import models.User;
 import models.UserRole;
 
 public class UserDTO {
+	private int id;
 	private String name;
 	private String surname;
 	private String username;
@@ -16,6 +17,7 @@ public class UserDTO {
 	}
 	
 	public UserDTO(User user, int points) {
+		id = user.getId();
 		name = user.getName();
 		surname = user.getSurname();
 		username = user.getUsername();
@@ -71,4 +73,14 @@ public class UserDTO {
 	public void setPoints(int points) {
 		this.points = points;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	
 }

@@ -6,32 +6,32 @@
                 <div class="row g-4">
                     <div class="col-12">
                         <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Factory Creation</small>
-                        <h1 class="display-5 mb-0">Create a new factory!<input type="text" class="form-control border-primary bg-light p-2 my-2" placeholder="Choose a Name" v-model="factory.name"/></h1>
+                        <h1 class="display-5 mb-0">Create a new factory!<input type="text" class="form-control bg-light p-2 my-2" :class="{ 'border-primary' : isNameValid, 'redBorder' : !isNameValid }" placeholder="Choose a Name" v-model="factory.name"/></h1>
                     </div>
                     <div class="col-md-6 col-lg-7">
-                        <input type="file" @change="handleFileUpload" accept="image/png" class="w-100 form-control p-3 mb-4 border-primary">
+                        <input type="file" @change="handleFileUpload" accept="image/png" class="w-100 form-control p-3 mb-4" :class="{ 'border-primary' : isFileValid, 'redBorder' : !isFileValid }">
                         <div class="d-inline-flex w-100 border border-primary p-4 pb-1 rounded">
                             <i class="fa fa-clock fa-2x text-primary me-4"></i>
                             <div class="">
                                 <h4>Working hours</h4>
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="time" class="w-100 form-control mb-4 border-primary bg-light" placeholder="Start" v-model="factory.openTime">
+                                        <input type="time" class="w-100 form-control mb-4 bg-light" :class="{ 'border-primary' : isStartValid, 'redBorder' : !isStartValid }" placeholder="Start" v-model="factory.openTime">
                                     </div>
                                     <div class="col-6">
-                                        <input type="time" class="w-100 form-control border-primary bg-light" placeholder="End" v-model="factory.closeTime">
+                                        <input type="time" class="w-100 form-control bg-light" :class="{ 'border-primary' : isEndValid, 'redBorder' : !isEndValid }" placeholder="End" v-model="factory.closeTime">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-inline-flex w-100 border border-primary p-4 pb-1 rounded my-4">
+                        <div class="d-inline-flex w-100 form-control bg-light p-4 pb-1 rounded my-4" :class="{ 'border-primary' : isAddressValid, 'redBorder' : !isAddressValid }">
                             <i class="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
                             <div class="">
                                 <h4>Address</h4>
                                 <p>{{ factory.address.street }}, {{ factory.address.city }}, {{ factory.address.state }}</p>
                             </div>
                         </div>
-                        <div class="d-inline-flex align-items-center p-4 w-100 border border-primary rounded">
+                        <div class="d-inline-flex align-items-center form-control bg-light p-4 w-100 rounded" :class="{ 'border-primary' : isManagerValid, 'redBorder' : !isManagerValid }">
                             <i class="fa fa-user fa-2x text-primary me-4"></i>
                             <h4 class="me-4 mt-1">Manager</h4>
                             <select v-if="managers.length != 0 && !managerRegistered" id="chocolateType" @change="testtest()" class="form-select border-primary p-2" aria-label="Chocolate type" v-model="factory.manager">
@@ -79,10 +79,6 @@ import RegisterForm from './RegisterForm.vue';
 
     //const mapKey = ref(0);
 
-    function testtest(){
-        console.log(factory.value.manager);
-    }
-
     const router = useRouter();
 
     const managers = ref([]);
@@ -109,6 +105,14 @@ import RegisterForm from './RegisterForm.vue';
     const managerRegistered = ref(false);
     const registerFormOpen = ref(false);
 
+    const isNameValid = ref(true);
+    const isStartValid = ref(true);
+    const isEndValid = ref(true);
+    const isFileValid = ref(true);
+    const isManagerValid = ref(true);
+    const isAddressValid = ref(true);
+    const canCreate = ref(false);
+
     function registerManager(manager){
         factory.value.manager = manager;
         managerRegistered.value = true;
@@ -130,6 +134,47 @@ import RegisterForm from './RegisterForm.vue';
     function saveImage(event){
         event.preventDefault();
 
+        canCreate.value = true;
+
+        if(factory.value.name == ''){
+            isNameValid.value = false;
+            canCreate.value = false;
+        }else
+            isNameValid.value = true;
+
+        if(factory.value.closeTime == ''){
+            isEndValid.value = false;
+            canCreate.value = false;
+        }else
+            isEndValid.value = true;
+
+        if(factory.value.openTime == ''){
+            isStartValid.value = false;
+            canCreate.value = false;
+        }else
+            isStartValid.value = true;
+
+        if(selectedImage.value == null){
+            isFileValid.value = false;
+            canCreate.value = false;
+        }else
+            isFileValid.value = true;
+
+        if(factory.value.manager == null){
+            isManagerValid.value = false;
+            canCreate.value = false;
+        }else
+            isManagerValid.value = true;
+            
+        if(factory.value.address.zip == 0){
+            isAddressValid.value = false;
+            canCreate.value = false;
+        }else
+            isAddressValid.value = true;
+
+        if(!canCreate.value)
+            return;
+
         const formData = new FormData();
         formData.append('file', selectedImage.value);
         axios.post('http://localhost:8080/WebShopAppREST/rest/file/image', formData, {
@@ -150,7 +195,8 @@ import RegisterForm from './RegisterForm.vue';
     }
 
     function saveFactory(){
-        console.log(factory);
+        
+
         axios.post('http://localhost:8080/WebShopAppREST/rest/factory/add', factory.value, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
@@ -251,5 +297,9 @@ import RegisterForm from './RegisterForm.vue';
     #map {
         width: 100%;
         height: 455px;
+    }
+
+    .redBorder{
+        border: red, 1.5px, solid;
     }
 </style>

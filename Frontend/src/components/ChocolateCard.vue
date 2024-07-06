@@ -29,13 +29,13 @@
                 </div>
                 <div v-if="quantityOpen && userRole==='Worker'" class="col-4 d-flex align-items-center">
                     <input type="number" class="form-control p-2 me-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="quantity"
-                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
+                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}"/>
                     <a v-if="userRole === 'Worker' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="editQuantity"><i class="fas fa-save"></i></a>
                 </div>
                 <div v-if="chocolate.quantity != 0 && userRole==='Customer'" class="col-4 d-flex align-items-center">
                     <h4 class="text-primary m-2">Buy:</h4>
                     <input type="number" class="form-control p-2" placeholder="Quantity"  min="1" max="10000" step="1" v-model="chocoInstance.quantity"
-                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}" @input="onInputChange"/>
+                    v-bind:class="{redBorder : !isInputValid},{'border-primary' : isInputValid}"/>
                 </div>
                 <div class="col d-flex align-items-center">
                     <a v-if="chocolate.quantity != 0 && userRole==='Customer'" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="shopClick()"><i class="fas fa-shopping-bag"></i></a>
@@ -96,7 +96,9 @@
     }
 
     function shopClick(){
+        isInputValid.value = true;
         if(chocoInstance.value.quantity <= 0 || chocoInstance.value.quantity > props.chocolate.quantity){
+            isInputValid.value = false;
             return;
         }
         
@@ -131,15 +133,6 @@
                 console.error('Failed to add chocolate to cart: ',error.response.status);
             }
         });
-    }
-
-    function onInputChange(){
-        if(quantity <= 0){
-            isInputValid.value = false;
-            return;
-        }
-
-        isInputValid.value = true;
     }
 </script>
 

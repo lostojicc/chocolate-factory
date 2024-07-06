@@ -2,9 +2,9 @@
     <div class="container-fluid menu py-6">
         <div class="container">
             <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
-                <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our Menu</small>
+                <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our Products</small>
                 <h1 class="display-5 mb-5">Best Chocolates in the World
-                    <a class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
+                    <a v-if="userRole === 'Manager' && editable" class="btn btn-primary btn-sm-square me-2 rounded-circle" @click="addClick"><i class="fas fa-plus"></i></a>
                 </h1>
             </div>
                 <AddChocholate v-if="openForm" @addEvent="handleAddEvent" :editInfo="editInfo" :factory="factory"/>
@@ -12,7 +12,7 @@
             <div class="tab-content">
                 <div id="tab-6" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" @editEvent="handleEditEvent" @deleteEvent="handleDeleteEvent"/>
+                        <ChocolateCard v-for="chocolate in chocolates" :chocolate="chocolate" :editable = "editable" @editEvent="handleEditEvent" @editQuantityEvent="handleQuantityEvent" @deleteEvent="handleDeleteEvent" @buyEvent="handleBuyEvent"/>
                     </div>
                 </div>
             </div>
@@ -28,9 +28,16 @@
     import {ref, onMounted } from 'vue';
     import axios from 'axios';
 
+    const userRole = ref(localStorage.getItem('role') || '');
+    const username = ref(localStorage.getItem('username') || '');
+
     const props = defineProps({
         factory: {
             type: Object,
+            required: true,
+        },
+        editable: {
+            type: Boolean,
             required: true
         }
     });
@@ -61,6 +68,19 @@
         await loadChocolates();
     });
 
+    function handleQuantityEvent(data){
+        axios.post(`http://localhost:8080/WebShopAppREST/rest/chocholate/updateQuantity?chocolateId=${data.chocolateId}&quantity=${data.quantity}`, {}, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Include the Authorization header
+            }
+        }).then(response => {
+            console.log("Success: ", response.data);  
+            loadChocolates();
+        }).catch(error => {
+            console.error("Error updating quantity: ", error.response.data);
+        });
+    }
+
     function handleDeleteConfirmationEvent(chocolateId){
         axios.delete(`http://localhost:8080/WebShopAppREST/rest/chocholate/delete/${chocolateId}`).then(response => {
             console.log("Success: ", response.data);  
@@ -73,7 +93,14 @@
     async function loadChocolates() {
         try {
             const chocolateResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/chocolates/${props.factory.id}`);
-            chocolates.value = chocolateResponse.data;
+            chocolates.value = chocolateResponse.data
+
+            chocolates.value.forEach(chocolate => {
+                if (chocolate.quantity > 0) {
+                    chocolate.isAvailable = true
+                }
+            });
+
         } catch (error) {
             console.error('Error loading chocolates:', error);
         }
@@ -106,6 +133,10 @@
         else{
             openForm.value = false;
         }
+    }
+
+    function handleBuyEvent(data){
+        loadChocolates()
     }
 
     function handleDeleteEvent(data){

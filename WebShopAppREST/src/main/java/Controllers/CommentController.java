@@ -5,19 +5,30 @@ import java.util.Collection;
 
 import dao.DAO;
 import models.Comment;
+import models.CommentState;
 import models.Factory;
 
 public class CommentController {
 	private String contextPath;
 	private DAO commentDao;
 	
+	private FactoryController factoryController;
+	
 	public CommentController(String contextPath) {
 		this.contextPath = contextPath;
 		commentDao = new DAO<Comment>(contextPath, Comment.class);
 	}
 	
+	public void SetDependency(FactoryController facController) {
+		this.factoryController = facController;
+	}
+	
 	public Collection<Comment> getAll(){
 		return commentDao.GetAll();
+	}
+	
+	public void Save(Comment comment){
+		commentDao.Save(comment);
 	}
 	
 	public Collection<Comment> getByFactoryId(int id){
@@ -30,4 +41,82 @@ public class CommentController {
 		
 		return comments;
 	}
+	
+	public Collection<Comment> GetAcceptedByFactoryId(int factoryId){
+		Collection<Comment> comments = new ArrayList<Comment>()	;
+		
+		for(Comment comment: this.getByFactoryId(factoryId)) {
+			if(comment.getState() == CommentState.Accepted) {
+				comments.add(comment);
+			}
+		}
+		
+		return comments;
+	}
+	
+	public Boolean Update(Comment comment) {
+		return commentDao.Update(comment);
+	}
+	
+	public Comment GetById(int commentId) {
+		return (Comment) commentDao.GetById(commentId);
+	}
+	
+	public Boolean AcceptOrRejectComment(int commentId, int logic) {
+		Comment comment = this.GetById(commentId);
+		if(comment == null) {
+			return false;
+		}
+		
+		if(comment.getState() != CommentState.Pending) {
+			return false;
+		}
+		
+		if(logic == 0) {
+			comment.setState(CommentState.Rejected);
+		}
+		else if(logic == 1){
+			comment.setState(CommentState.Accepted);
+			
+		}
+		else {
+			return false;
+		}
+		
+		boolean flag = this.Update(comment);
+		UpdateFactoryGrade(comment.getFactoryId());
+		
+		return flag;
+	}
+	
+	private void UpdateFactoryGrade(int factoryId) {
+		ArrayList<Comment> comments = (ArrayList<Comment>) this.GetAcceptedByFactoryId(factoryId);
+		double sum = 0.0;
+		double gradesNum = comments.size();
+		for(Comment comment:comments) {
+			sum+= comment.getGrade();
+		}
+		
+		double avgGrade = sum / gradesNum;
+		Factory fac = factoryController.getById(factoryId);
+		System.out.println(avgGrade);
+		fac.setRating(avgGrade);
+		factoryController.Update(fac);
+	}
+
+	public ArrayList<Comment> GetByUserIdAndFactoryId(int userId, int factoryId){
+		ArrayList<Comment> comments = new ArrayList<Comment>();
+		
+		for (Comment comment : getAll()) {
+			if (comment.getUserId() == userId && comment.getFactoryId() == factoryId) 
+				comments.add(comment);
+		}
+		
+		return comments;
+	}
+	
+	public int GetNumberOfCommentsOnFactory(int userId, int factoryId) {
+		return this.GetByUserIdAndFactoryId(userId,factoryId).size();
+	}
+	
 }

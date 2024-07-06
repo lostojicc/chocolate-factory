@@ -10,17 +10,21 @@ import javax.swing.colorchooser.ColorChooserComponentFactory;
 
 import dao.DAO;
 import models.Chocholate;
+import models.ChocholateInstance;
 import models.ChocholateKind;
 import models.ChocholateType;
 
 
 public class ChocholateController {
-private String contextPath;
+	private String contextPath;
 	
 	private DAO CHODAo;
+	private ChocholateInstanceController chochoInstanceContr;
+	private ShoppingCartController shoppingController;
 	
-	public void setDependency() {
-		
+	public void setDependency(ChocholateInstanceController chocoInstanceContr, ShoppingCartController shopping) {
+		this.chochoInstanceContr = chocoInstanceContr;
+		this.shoppingController = shopping;
 	}
 	
 	public ChocholateController(String context) {
@@ -44,14 +48,26 @@ private String contextPath;
 	}
 	
 	public Boolean Delete(int id) {
+		for(ChocholateInstance choco: chochoInstanceContr.GetNotCheckedByChocolateId(id)) {
+			shoppingController.DeleteChocholateInstance(choco.getId());
+		}
+		
 		return CHODAo.Delete(GetById(id));
+	}
+	
+	public boolean updateQuantity(int chocolateId, int quantity) {
+		Chocholate chocolate = GetById(chocolateId);
+		
+		chocolate.setQuantity(quantity);
+		
+		return Update(chocolate);
 	}
 	
 	public ArrayList<Chocholate> getByFactoryId(int id){
 		ArrayList<Chocholate> chocholates = new ArrayList<>();
 		
 		for (Chocholate chocholate : (ArrayList<Chocholate>)CHODAo.GetAll()) {
-			if(chocholate.getFactoryId() == id)
+			if(chocholate.getFactoryId() == id && !chocholate.isDeleted())
 				chocholates.add(chocholate);
 		}
 		

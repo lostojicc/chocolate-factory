@@ -1,32 +1,47 @@
 <template>
+    <HomeHeader/>
     <div class="container-fluid py-3">
-        <div class="text-center wow bounceInUp" data-wow-delay="0.1s">
-            <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Factories</small>
-            <h1 class="display-5 mb-5">These are all the factories</h1>
-        </div>
         <div v-if="loading" id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-grow text-primary" role="status"></div>
         </div>
         <div v-else>
-            <FactoryCard v-for="factory in factories" :key="factory.id" :factory="factory"/>
+            <FactoryCard v-for="factory in factories" @deleteEvent="handleDeleteEvent" :key="factory.id" :factory="factory"/>
         </div>
     </div>
 </template>
 
 <script setup>
     import FactoryCard from '../components/FactoryCard.vue';
+    import AddFactory from '../components/AddFactory.vue';
+    import HomeHeader from '../components/HomeHeader.vue';
     import {ref, onMounted} from 'vue';
     import axios from 'axios';
 
     const factories = ref([]);
     const loading = ref(true);
+    const userRole = ref(localStorage.getItem('role') || '');
+    const addFormOpen = ref(false);
 
     onMounted(async () => {
         await loadFactories();
-        loading.value = false;
+        
     });
 
+    function handleDeleteEvent(data){
+        if (confirm("Are you sure you want to delete this factory?") == true) 
+            handleDeleteConfirmationEvent(data);
+    }
+
+    function handleDeleteConfirmationEvent(data){
+        axios.delete(`http://localhost:8080/WebShopAppREST/rest/factory/delete/${data}`).then(response => {
+            loadFactories();
+        }).catch(error => {
+            console.error(error.response.data);
+        });
+    }
+
     async function loadFactories() {
+        loading.value = true;
         try {
             const factoryResponse = await axios.get("http://localhost:8080/WebShopAppREST/rest/factory/");
             factories.value = factoryResponse.data;
@@ -38,6 +53,8 @@
                 const addressResponse = await axios.get(`http://localhost:8080/WebShopAppREST/rest/factory/location/address/${factory.location.addressId}`);
                 factory.location.address = addressResponse.data;
             }
+
+            loading.value = false;
         } catch (error) {
             console.error('Error loading factories:', error);
         }

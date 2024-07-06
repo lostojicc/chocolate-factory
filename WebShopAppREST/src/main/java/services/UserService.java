@@ -2,23 +2,39 @@ package services;
 
 import java.nio.file.attribute.UserPrincipalLookupService;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import Controllers.ControllersInjector;
+import Controllers.CustomerController;
+import Controllers.ShoppingCartController;
 import Controllers.UserController;
 import dao.DAO;
+import dto.CustomerDTO;
+import dto.UserDTO;
+import dto.UserSearchDTO;
 import models.Chocholate;
+import models.Customer;
+import models.CustomerTypeName;
+import models.ShoppingCart;
 import models.User;
+import models.UserRole;
+import utils.JWTUtils;
 
 @Path("/user")
 public class UserService {
@@ -39,6 +55,19 @@ public class UserService {
 		}
 	}
 	
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSearched(UserSearchDTO search) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		Collection<UserDTO> users = userCont.getSearched(search);
+		
+		return Response.ok().entity(users).build();
+	}
+	
 	@GET
 	@Path("/getAll")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +79,17 @@ public class UserService {
 		return userCont.GetAll();
 	}
 	
+	@GET
+	@Path("/getFreeManagers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<User> getFreeManagers(){
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		return userCont.getFreeManagers();
+	}
+	
 	@POST
 	@Path("/register")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -58,6 +98,41 @@ public class UserService {
 		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
 		
 		UserController userCont = conInjector.getController(UserController.class);
+		CustomerController customerController = conInjector.getController(CustomerController.class);
+		
+		if(userCont.GetByUsername(user.getUsername()) != null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Username")
+                    .build();
+		}
+		
+		if(!userCont.CheckUserValid(user)) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to register user")
+                    .build();
+		}
+		
+		userCont.Save(user);
+		
+		Customer newCustomer = new Customer();
+		newCustomer.setPoints(0);
+		newCustomer.setUserId(user.getId());
+		newCustomer.setCustomerTypeId(1); //postaje none
+		customerController.Save(newCustomer);
+		
+		String message = "User registered successfully.";
+        return Response.ok(message).build();
+	}
+	
+	@POST
+	@Path("/registerWorker")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response registerWorker(User user) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		CustomerController customerController = conInjector.getController(CustomerController.class);
 		
 		if(userCont.GetByUsername(user.getUsername()) != null) {
 			return Response.status(Response.Status.BAD_REQUEST)
@@ -75,5 +150,138 @@ public class UserService {
 		
 		String message = "User registered successfully.";
         return Response.ok(message).build();
+	}
+	
+	@GET
+	@Path("/get/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetCustomerByUsername(@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Customer))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userController = conInjector.getController(UserController.class);
+		CustomerController customerController = conInjector.getController(CustomerController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to get user")
+                    .build();
+		}
+		
+		Customer customer = customerController.GetByUserId(user.getId());
+		if(customer == null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to get customer")
+                    .build();
+		}
+		
+		CustomerTypeName customerType = customerController.GetCustomerTypeNameByCustomer(customer);
+		
+		CustomerDTO customerDTO = new CustomerDTO(user, customer.getPoints(), customerType);
+		
+		return Response.ok().entity(customerDTO).build();
+	}
+	
+	@GET
+	@Path("/getUser/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetByUsername(@PathParam("username") String username, @HeaderParam("Authorization") String authorizationHeader) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userController = conInjector.getController(UserController.class);
+		
+		User user = userController.GetByUsername(username);
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to get user")
+                    .build();
+		}
+		
+		return Response.ok().entity(user).build();
+	}
+	
+	
+	
+	@POST
+	@Path("/updateName/{data}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response UpdateName(User sentUser, @PathParam("data") int data) {
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		
+		UserController userCont = conInjector.getController(UserController.class);
+		User user = userCont.getById(sentUser.getId());
+		
+		if(user == null) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to find user")
+                    .build();
+		}
+		
+		if(data == 1)
+			user.setName(sentUser.getName());
+		if(data == 2)
+			user.setSurname(sentUser.getSurname());
+		if(data == 3)
+			user.setDateOfBirth(sentUser.getDateOfBirth());
+		if(data == 4)
+			user.setGender(sentUser.getGender());
+		if(data == 5)
+			user.setUsername(sentUser.getUsername());
+		if(data == 6)
+			user.setPassword(sentUser.getPassword());
+		
+		if(!userCont.CheckUserValid(user)) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: name not valid")
+                    .build();
+		}
+		
+		if(!userCont.Update(user)) {
+			return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Bad Request: failed to update user")
+                    .build();
+		}
+		
+		String message = "Users Name updated successfully.";
+        return Response.ok(message).build();
+	}
+	
+	@GET
+	@Path("/getWorkers/{factoryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getWorkersForFactory(@HeaderParam("Authorization") String authorizationHeader, @PathParam("factoryId") int factoryId) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Manager))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userController = conInjector.getController(UserController.class);
+		
+		Collection<User> workers = userController.getWorkersForFactory(factoryId);
+		
+		return Response.ok().entity(workers).build();
+	}
+	
+	@POST
+	@Path("/block/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response blockUser(@HeaderParam("Authorization") String authorizationHeader, @PathParam("id") int id) {
+		if(!JWTUtils.IsRoleCorrect(authorizationHeader, UserRole.Administrator))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		ControllersInjector conInjector = (ControllersInjector) ctx.getAttribute("controllers");
+		UserController userCont = conInjector.getController(UserController.class);
+		
+		if(userCont.blockUser(id))		
+			return Response.ok().build();
+		
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 }

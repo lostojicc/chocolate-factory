@@ -2,7 +2,7 @@ package models;
 
 import serializer.ISerializable;
 
-public class Chocholate implements IIdentifiable, ISerializable {
+public class Chocholate implements IIdentifiable, ISerializable, IsDeletable {
 	private int id;
 	private String name;
 	private double price;
@@ -13,15 +13,16 @@ public class Chocholate implements IIdentifiable, ISerializable {
 	private double grams;
 	private String description;
 	private String imagePath;
-	private Boolean isAvailable;
+	private Boolean isDeleted;
 	private int quantity;
 	
 	public Chocholate() {
 		super();
+		this.isDeleted = false;
 	}
 
 	public Chocholate(String name, double price, ChocholateKind kind, int factoryId, ChocholateType type, double grams,
-			String description, String imagePath, Boolean isAvailable, int quantity) {
+			String description, String imagePath, Boolean isDeleted, int quantity) {
 		super();
 		this.name = name;
 		this.price = price;
@@ -31,7 +32,7 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		this.grams = grams;
 		this.description = description;
 		this.imagePath = imagePath;
-		this.isAvailable = isAvailable;
+		this.isDeleted = isDeleted;
 		this.quantity = quantity;
 	}
 
@@ -48,8 +49,8 @@ public class Chocholate implements IIdentifiable, ISerializable {
 				Double.toString(grams),
 				description,
 				imagePath,
-				isAvailable.toString(),
-				Integer.toString(quantity)
+				Integer.toString(quantity),
+				isDeleted.toString()
 		};
 		return values;
 	}
@@ -65,8 +66,8 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		this.grams = Double.parseDouble(values[6]);
 		this.description = values[7];
 		this.imagePath = values[8];
-		this.isAvailable = Boolean.parseBoolean(values[9]);
-		this.quantity = Integer.parseInt(values[10]);
+		this.quantity = Integer.parseInt(values[9]);
+		this.isDeleted = Boolean.parseBoolean(values[10]);
 	}
 	
 	public String getName() {
@@ -133,12 +134,12 @@ public class Chocholate implements IIdentifiable, ISerializable {
 		this.imagePath = imagePath;
 	}
 
-	public Boolean getIsAvailable() {
-		return isAvailable;
+	public Boolean isDeleted() {
+		return isDeleted;
 	}
 
-	public void setIsAvailable(Boolean isAvailable) {
-		this.isAvailable = isAvailable;
+	public void setDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	public int getQuantity() {

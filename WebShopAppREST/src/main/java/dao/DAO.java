@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import models.*;
 import serializer.*;
 
-public class DAO<T extends IIdentifiable & ISerializable> implements IDao<T> {
+public class DAO<T extends IIdentifiable & ISerializable & IsDeletable> implements IDao<T> {
 	protected Serializer<T> _serializer;
 	protected ArrayList<T> _items;
 	
@@ -51,10 +51,10 @@ public class DAO<T extends IIdentifiable & ISerializable> implements IDao<T> {
 		
 		if(foundItem == null) 
 			return false;
+		
+		foundItem.setDeleted(true);
 			
-		_items.remove(foundItem);
-		_serializer.ToCSV(_items);
-		return true;
+		return Update(foundItem);
 	}
 
 	@Override

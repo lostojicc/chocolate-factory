@@ -16,4 +16,8 @@ public class AddressController {
 	public Address getById(int id) {
 		return (Address) addressDao.GetById(id);
 	}
+	
+	public Address save(Address address) {
+		return (Address) addressDao.Save(address);
+	}
 }

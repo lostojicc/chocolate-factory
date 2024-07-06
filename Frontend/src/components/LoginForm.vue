@@ -1,5 +1,18 @@
 <template>
     <div class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
+        <div v-if="errorMessage != ''" class="container border border-primary bg-light align-items-center mb-3">
+            <div class="row">
+                <div class="col-1 d-flex align-items-center">
+                    <i class="fas fa-info-circle" style="color: red;"></i>
+                </div>
+                <div class="col-10 d-flex justify-content-center align-items-center text-center">
+                    <p class="my-3">{{ errorMessage }}</p>
+                </div>
+                <div class="col-1 d-flex align-items-center">
+                    <button @click="dismissError" class="btn"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+        </div>
             <div class="container">
                 <div class="row g-0">
                     <div class="col-1">
@@ -16,7 +29,7 @@
     
                                 </div>
                                 <div class="col-lg-6 col-md-6">                            
-                                        <input type="text" class="form-control border-primary p-2" placeholder="Enter Your Username">                  
+                                        <input type="text" v-model="user.username" class="form-control border-primary p-2" placeholder="Enter Your Username">                  
                                 </div>
                                 <div class="col-lg-3 col-md-6">
 
@@ -25,7 +38,7 @@
 
                                 </div>
                                 <div class="col-lg-6 col-md-6">
-                                    <input type="text" class="form-control border-primary p-2" placeholder="Enter Your Password">
+                                    <input type="password" v-model="user.password" class="form-control border-primary p-2" placeholder="Enter Your Password">
                                 </div>
                                 <div class="col-lg-3 col-md-6">
 
@@ -35,7 +48,7 @@
                                 <div class="col">
                                 </div>
                                 <div class="col text-center stackpanel">
-                                    <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill">Sign In</button>
+                                    <button @click="signIn" type="submit" class="btn btn-primary px-5 py-3 rounded-pill">Sign In</button>
                                     <br/>
                                     <label>Don't have an account? <router-link :to="'/register'"><b>Register now.</b></router-link></label>
                                 </div>
@@ -53,6 +66,55 @@
             </div>
         </div>
 </template>
+
+<script setup>
+    import axios from 'axios';
+    import { ref, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
+    const invalidUsername = ref("");
+    const invalidPassword = ref("");
+    
+    const errorMessage = ref('');
+
+    const user = ref({
+        username : '',
+        password : ''
+    });
+
+    function decodeToken(token){
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(atob(base64));
+    }
+
+    function dismissError(){
+        errorMessage.value = '';
+    }
+
+    function signIn(event){
+        event.preventDefault();
+        console.log(user.value);
+        axios.post("http://localhost:8080/WebShopAppREST/rest/login", user.value).then(response => {
+            let token = response.data;
+            let decodedToken = decodeToken(token);
+
+            let username = decodedToken.sub;
+            let role = decodedToken.role;
+
+            localStorage.setItem('jwtToken', token);
+            localStorage.setItem('username', username);
+            localStorage.setItem('role', role);
+            location.reload();
+        }).catch(error => {
+            errorMessage.value = error.response.data;
+            console.log(error.response.data)
+        });
+    }
+
+    
+</script>
 
 <style scoped>
     .stackpanel{

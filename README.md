@@ -1,8 +1,9 @@
 ## Chocolate Factory
 
-- A project done for web programming course at university in teams of two
-- Managing chocolate factories and providing each a platform to sell products
-- Contributors: Strahinja Đukić
+- Full-stack web application for managing chocolate factories and enabling online product sales in collaboration with Strahinja Djukic for the web programming course at university
+- Functionalities that allow factory owners and workers to maintain product listings and track inventory
+- Tools for administrators to oversee user accounts and control permissions
+- Platform for customers to browse, order and purchase chocolate products 
 
 ## Visuals
 
